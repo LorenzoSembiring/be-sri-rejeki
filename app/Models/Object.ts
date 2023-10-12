@@ -1,12 +1,9 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
-export default class Role extends BaseModel {
+export default class Object extends BaseModel {
   @column({ isPrimary: true })
   public id: number
-
-  @column()
-  public role: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
