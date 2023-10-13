@@ -5,6 +5,27 @@ export default class Address extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column()
+  public user_id: number
+
+  @column()
+  public jalan: string
+
+  @column()
+  public kelurahan: string
+
+  @column()
+  public kecamatan: string
+
+  @column()
+  public kota: string
+
+  @column()
+  public provinsi: string
+
+  @column()
+  public kode_pos: number
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

@@ -5,6 +5,12 @@ export default class Mesh extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column()
+  public object_id: number
+
+  @column()
+  public path: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

@@ -5,6 +5,12 @@ export default class UserRole extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column()
+  public id_user: number
+
+  @column()
+  public id_role: number
+  
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
