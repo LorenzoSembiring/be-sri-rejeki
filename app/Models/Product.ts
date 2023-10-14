@@ -23,6 +23,9 @@ export default class Product extends BaseModel {
   @column()
   public object_id: number
 
+  @column()
+  public category_id: number
+  
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

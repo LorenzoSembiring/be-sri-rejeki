@@ -10,6 +10,7 @@ export default class extends BaseSchema {
       table.string('description').notNullable()
       table.integer('price').notNullable()
       table.integer('size').notNullable()
+      table.integer('category_id').unsigned().references('categories.id').onDelete('CASCADE')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
