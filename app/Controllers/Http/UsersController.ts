@@ -8,8 +8,8 @@ export default class UsersController {
 
     const existedUser = await User.query().where({ email: email }).first()
     if (existedUser) {
-      return response.status(422).json({
-        message: 'email telah terdaftar',
+      return response.status(409).json({
+        message: 'Email already taken',
       })
     }
 
@@ -20,51 +20,65 @@ export default class UsersController {
       username: username,
       phone: phone,
       first_name: first_name,
-      last_name: last_name
+      last_name: last_name,
     })
 
     const token = await auth.use('api').generate(user, {
       expiresIn: '3 hours',
     })
-    return response.json({
+
+    return response.status(200).json({
+      code: '200',
+      message: 'user successfully registered',
       data: {
-        user: user,
-        token: token,
+        user,
+        token,
       },
     })
   }
 
   public async login({ request, response, auth }: HttpContextContract) {
     const { email, password } = request.body()
-
+    
     const user = await User.query().where({ email: email }).first()
-    if (!user) {
-      return response.status(422).json({
-        message: 'Email salah',
+
+    try {
+      if (!user) {
+        return response.status(401).json({
+          message: 'Invalid email or password',
+        })
+      }
+  
+      if (!(await Hash.verify(user.password, password))) {
+        return response.status(401).json({
+          message: 'Invalid email or password',
+        })
+      }
+  
+      const token = await auth.use('api').generate(user, {
+        expiresIn: '3 hours',
+      })
+      return response.status(200).json({
+        code: '200',
+        message: 'login success',
+        data: {
+          user,
+          token,
+        },
+      })
+    } catch (error) {
+      return response.status(404).json({
+        code: "404",
+        message: "Error"
       })
     }
-
-    if (!(await Hash.verify(user.password, password))) {
-      return response.status(422).json({
-        message: 'email atau password salah',
-      })
-    }
-
-    const token = await auth.use('api').generate(user, {
-      expiresIn: '3 hours',
-    })
-    return response.json({
-      data: {
-        user: user,
-        token: token,
-      },
-    })
   }
 
-  public async logout( {response, auth}: HttpContextContract ) {
+  public async logout({ response, auth }: HttpContextContract) {
     await auth.use('api').revoke()
-    return {
-      revoked: true
-    }
+
+    return response.status(200).json({
+      message: 'Logout success',
+    })
   }
 }
