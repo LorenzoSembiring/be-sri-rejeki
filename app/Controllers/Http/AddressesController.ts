@@ -24,7 +24,6 @@ export default class AddressesController {
   }
 
   public async get({ auth, response }: HttpContextContract) {
-    // const user_id = request.body()
 
     const user = await auth.authenticate()
     const userID = user.id
@@ -74,10 +73,11 @@ export default class AddressesController {
 
       return response.status(200).json({
         code: '200',
+        message: "delete success"
       })
     } catch (error) {
       return response.status(500).json({
-        error,
+        error
       })
     }
   }

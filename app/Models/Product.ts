@@ -18,12 +18,6 @@ export default class Product extends BaseModel {
   public size: number
 
   @column()
-  public picture_id: number
-
-  @column()
-  public object_id: number
-
-  @column()
   public category_id: number
   
   @column.dateTime({ autoCreate: true })
