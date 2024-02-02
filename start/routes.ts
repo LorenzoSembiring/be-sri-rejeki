@@ -23,6 +23,7 @@ import './routes/user'
 import './routes/address'
 import './routes/product'
 import './routes/category'
+import './routes/auth'
 
 Route.get('/', async () => {
   return { hello: 'world' }

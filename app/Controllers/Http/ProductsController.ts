@@ -11,9 +11,9 @@ export default class ProductsController {
     try {
       const user = await auth.authenticate()
       const role = await usersController.getRole(user)
-      
+
       const { name, description, price, size, category_id } = request.body()
-      
+
       //return model of category or null if not found any
       const category = await Category.findBy('id', category_id)
 
@@ -29,20 +29,23 @@ export default class ProductsController {
         })
 
         return response.status(201).json({
-          code: '201',
-          message: 'Product added succesfully',
+          code: 201,
+          status: "success",
+          message: "Product added succesfully",
           data: product,
         })
       } else {
         return response.status(401).json({
-          code: '401',
-          message: 'Unauthorized user',
+          code: 401,
+          status: 'Unauthorized',
+          message: "Your role access is not sufficient for this action"
         })
       }
     } catch (error) {
       return response.status(500).json({
-        code: '500',
-        message: 'Invalid Token',
+        code: 500,
+        status: "fail",
+        message: error,
       })
     }
   }
@@ -51,13 +54,15 @@ export default class ProductsController {
     try {
       const product = await Database.from("products").where({category_id : category})
       return response.status(200).json({
-        code: "200",
+        code: 200,
+        status: "success",
         data: product
       })
     } catch (error) {
       return response.status(500).json({
-        code: "500",
-        error
+        code: 500,
+        status: "fail",
+        message: error
       })
     }
   }
@@ -66,14 +71,15 @@ export default class ProductsController {
       const product = await Product.all()
 
       return response.status(200).json({
-        code: '200',
-        message: '200 ok',
+        code: 200,
+        status: "success",
         data: product,
       })
     } catch (error) {
       return response.status(500).json({
-        code: '500',
-        error,
+        code: 500,
+        sttaus: "fail",
+        message: error
       })
     }
   }
@@ -91,19 +97,22 @@ export default class ProductsController {
         await product?.save()
 
         return response.status(200).json({
-          code: '200',
-          message: 'update success',
+          code: 200,
+          status: "success",
+          message: "update success",
         })
       } else {
         return response.status(401).json({
-          code: '401',
-          message: 'Unauthorized user',
+          code: 401,
+          status: "unauthorized",
+          message: "Your role access is not sufficient for this action"
         })
       }
     } catch (error) {
       return response.status(500).json({
-        code: '500',
-        message: 'Invalid Token',
+        code: 500,
+        status: "fail",
+        message: error,
       })
     }
   }
@@ -119,19 +128,22 @@ export default class ProductsController {
         await product?.delete()
 
         return response.status(200).json({
-          code: '200',
-          message: 'Product deleted successfully',
+          code: 200,
+          status: "success",
+          message: "Product deleted successfully",
         })
       } else {
         return response.status(401).json({
-          code: '401',
-          message: 'Unauthorized user',
+          code: 401,
+          status: "unauthorized",
+          message: "Your role access is not sufficient for this action"
         })
       }
     } catch (error) {
       return response.status(500).json({
-        code: '500',
-        message: 'Invalid Token',
+        code: 500,
+        status: "fail",
+        message: error,
       })
     }
   }

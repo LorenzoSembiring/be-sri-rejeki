@@ -4,9 +4,16 @@ import UserRole from 'App/Models/UserRole'
 export default class extends BaseSeeder {
   public async run () {
     // Write your database queries inside the run method
-    await UserRole.create({
-      id_user: 1,
-      id_role: 1
-    })
+    await UserRole.createMany([
+      {
+        id_user: 1,
+        id_role: 1
+      },
+      {
+        id_user: 2,
+        id_role: 2
+      }
+    ]
+      )
   }
 }

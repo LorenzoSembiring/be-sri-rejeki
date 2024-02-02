@@ -46,18 +46,20 @@ export default class UsersController {
     try {
       if (!user) {
         return response.status(401).json({
+          code: '401',
           message: 'Invalid email or password',
         })
       }
 
       if (!(await Hash.verify(user.password, password))) {
         return response.status(401).json({
+          code: '401',
           message: 'Invalid email or password',
         })
       }
 
       const token = await auth.use('api').generate(user, {
-        expiresIn: '3 hours',
+        expiresIn: '1 hours',
       })
       return response.status(200).json({
         code: '200',
@@ -83,6 +85,28 @@ export default class UsersController {
     })
   }
 
+  public async updatePicture({ request, response, auth }: HttpContextContract) {
+    const authenticatedUser = await auth.authenticate()
+    const uploadedFile = request.file('picture')
+
+    if (uploadedFile) {
+      await uploadedFile.moveToDisk('./')
+    } else {
+      return response.status(400).json({
+        code: 400,
+        message: "File not provided!"
+      })
+    }
+
+    try {
+      const user = await User.findBy('id', authenticatedUser.id)
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        message: 'Error',
+      })
+    }
+  }
   public async getRole(user) {
     const userID = user.id
     var roleID = await Database.rawQuery(

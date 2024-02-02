@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Category from 'App/Models/Category'
 import UsersController from './UsersController'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class CategoriesController {
   public async store({ request, response, auth }: HttpContextContract) {
@@ -18,20 +19,23 @@ export default class CategoriesController {
         })
 
         return response.status(201).json({
-          code: '201',
-          message: 'Category added successfully',
+          code: 201,
+          status: "created",
+          message: "Category added successfully",
           data: category,
         })
       } else {
         return response.status(401).json({
-          code: '401',
-          message: 'Unauthorized',
+          code: 401,
+          status: "Unauthorized",
+          message: "Your role access is not sufficient for this action"
         })
       }
     } catch (error) {
       return response.status(500).json({
         code: '500',
-        error,
+        status: "fail",
+        message: error
       })
     }
   }
@@ -40,30 +44,34 @@ export default class CategoriesController {
       const category = await Category.find(params.id)
 
       return response.status(200).json({
-        code: '200',
-        message: '200 ok',
+        code: 200,
+        status: 'success',
         data: category,
       })
     } catch (error) {
       return response.status(500).json({
-        code: '500',
-        error,
+        code: 500,
+        status: "fail",
+        message: error,
       })
     }
   }
-  public async getAll({ response }: HttpContextContract) {
+  public async getAll({ request, response }: HttpContextContract) {
     try {
-      const category = await Category.all()
+      const category = await Database
+      .from('categories')
+      .paginate(request.input('page'), request.input('limit'))
 
       return response.status(200).json({
-        code: '200',
-        message: '200 ok',
+        code: 200,
+        status: "success",
         data: category,
       })
     } catch (error) {
       return response.status(500).json({
-        code: '500',
-        error,
+        code: 500,
+        status: "fail",
+        message: error,
       })
     }
   }
@@ -83,19 +91,22 @@ export default class CategoriesController {
         await category?.save()
 
         return response.status(200).json({
-          code: '200',
-          message: 'update success',
+          code: 200,
+          status: "success",
+          message: "update success",
         })
       } else {
         return response.status(401).json({
-          code: '401',
-          message: 'unauthorized',
+          code: 401,
+          status: 'unauthorized',
+          message: "Your role access is not sufficient for this action"
         })
       }
     } catch (error) {
       return response.status(500).json({
-        code: '500',
-        error,
+        code: 500,
+        status: "fail",
+        message: error
       })
     }
   }
@@ -109,21 +120,24 @@ export default class CategoriesController {
       if (role == "admin") {
         const category = await Category.findBy('id', params.id)
         await category?.delete()
-  
+
         return response.status(200).json({
-          code: '200',
+          code: 200,
+          status: "success",
           message: "delete success"
-        })        
+        })
       } else {
         return response.status(401).json({
-            code: '401',
-            message: "unauthorized"
-          })      
+            code: 401,
+            status: "unauthorized",
+            message: "Your role access is not sufficient for this action"
+          })
       }
     } catch (error) {
         return response.status(500).json({
-            code: "500",
-            error
+            code: 500,
+            status: "fail",
+            message: error
         })
     }
   }
