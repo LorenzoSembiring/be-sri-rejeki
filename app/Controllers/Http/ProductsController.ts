@@ -151,7 +151,7 @@ export default class ProductsController {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error,
+        message: error
       })
     }
   }
