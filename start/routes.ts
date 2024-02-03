@@ -24,6 +24,7 @@ import './routes/address'
 import './routes/product'
 import './routes/category'
 import './routes/auth'
+import './routes/size'
 
 Route.get('/', async () => {
   return { hello: 'world' }
