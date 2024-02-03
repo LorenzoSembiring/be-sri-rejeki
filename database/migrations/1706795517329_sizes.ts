@@ -8,7 +8,7 @@ export default class extends BaseSchema {
       table.increments('id').primary()
       table.integer('product_id').unsigned().references('products.id').onDelete('CASCADE')
       table.integer('size').notNullable()
-      table.integer('stok').notNullable()
+      table.integer('stock').notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

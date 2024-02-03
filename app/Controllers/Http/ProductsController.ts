@@ -3,6 +3,7 @@ import UsersController from './UsersController'
 import Product from 'App/Models/Product'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Category from 'App/Models/Category'
+import Size from 'App/Models/Size'
 
 export default class ProductsController {
   public async store({ request, response, auth }: HttpContextContract) {
@@ -12,39 +13,46 @@ export default class ProductsController {
       const user = await auth.authenticate()
       const role = await usersController.getRole(user)
 
-      const { name, description, price, size, category_id } = request.body()
+      const { name, description, price, category_id, size } = request.body()
 
       //return model of category or null if not found any
       const category = await Category.findBy('id', category_id)
 
       //role is admin and the category is exist (not null)
       if (role == 'admin' && category != null) {
-
         const product = await Product.create({
           name: name,
           description: description,
           price: price,
-          size: size,
           category_id: category_id,
         })
 
+        var arr = this.split(size)
+
+        for (let index = 0; index < arr.length; index++) {
+          await Size.create({
+            product_id: product.id,
+            size: arr[index]
+          })
+        }
+
         return response.status(201).json({
           code: 201,
-          status: "success",
-          message: "Product added succesfully",
+          status: 'success',
+          message: 'Product added succesfully',
           data: product,
         })
       } else {
         return response.status(401).json({
           code: 401,
           status: 'Unauthorized',
-          message: "Your role access is not sufficient for this action"
+          message: 'Your role access is not sufficient for this action',
         })
       }
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        status: "fail",
+        status: 'fail',
         message: error,
       })
     }
@@ -52,17 +60,17 @@ export default class ProductsController {
   public async get({ request, response }: HttpContextContract) {
     const category = request.body()
     try {
-      const product = await Database.from("products").where({category_id : category})
+      const product = await Database.from('products').where({ category_id: category })
       return response.status(200).json({
         code: 200,
-        status: "success",
-        data: product
+        status: 'success',
+        data: product,
       })
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        status: "fail",
-        message: error
+        status: 'fail',
+        message: error,
       })
     }
   }
@@ -72,14 +80,14 @@ export default class ProductsController {
 
       return response.status(200).json({
         code: 200,
-        status: "success",
+        status: 'success',
         data: product,
       })
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        sttaus: "fail",
-        message: error
+        sttaus: 'fail',
+        message: error,
       })
     }
   }
@@ -98,20 +106,20 @@ export default class ProductsController {
 
         return response.status(200).json({
           code: 200,
-          status: "success",
-          message: "update success",
+          status: 'success',
+          message: 'update success',
         })
       } else {
         return response.status(401).json({
           code: 401,
-          status: "unauthorized",
-          message: "Your role access is not sufficient for this action"
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action',
         })
       }
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        status: "fail",
+        status: 'fail',
         message: error,
       })
     }
@@ -129,22 +137,43 @@ export default class ProductsController {
 
         return response.status(200).json({
           code: 200,
-          status: "success",
-          message: "Product deleted successfully",
+          status: 'success',
+          message: 'Product deleted successfully',
         })
       } else {
         return response.status(401).json({
           code: 401,
-          status: "unauthorized",
-          message: "Your role access is not sufficient for this action"
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action',
         })
       }
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        status: "fail",
+        status: 'fail',
         message: error,
       })
     }
+  }
+  private split(angka: string) {
+
+    const stringed = JSON.stringify(angka)
+    const strip = stringed.substring(1, stringed.length - 1)
+    var arr: string[] = []
+
+    const res = strip.split(',')
+    arr = res
+
+    var arrNumber: number[] = []
+    for (let index = 0; index < arr.length; index++) {
+      var parsed = parseInt(arr[index])
+      arrNumber.push(parsed)
+    }
+
+    return arrNumber
+    // return response.status(200).json({
+    //   code: 200,
+    //   data: arrNumber
+    // })
   }
 }
