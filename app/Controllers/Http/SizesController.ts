@@ -14,35 +14,30 @@ export default class SizesController {
 
       const product = await Product.findBy('id', product_id)
 
-      if(role == "admin" && product) {
-
-        const sizes = Size.create({
-          product_id : product_id,
-          size : size
+      if (role == 'admin' && product) {
+        const sizes = await Size.create({
+          product_id: product_id,
+          size: size,
         })
 
         return response.status(200).json({
           code: 200,
           status: 'success',
           message: 'Product size added successfully',
-          data: sizes
+          data: sizes,
         })
-
       } else {
-
         return response.status(401).json({
           code: 401,
           status: 'Unauthorized',
           message: 'Your role access is not sufficient for this action',
         })
-
       }
-
     } catch (error) {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error
+        message: error,
       })
     }
   }
@@ -53,33 +48,45 @@ export default class SizesController {
       const user = await auth.authenticate()
       var role = await usersController.getRole(user)
 
-      if (role == "admin") {
-
+      if (role == 'admin') {
         const size = await Size.findBy('id', params.id)
-        await size?.delete()
+        if (size) {
+          await size?.delete()
 
-        return response.status(200).json({
-          code: 200,
-          status: 'success',
-          message: 'Product size deleted successfully',
-        })
+          const sizeCheck = await Size.findBy('id', params.id)
+          if(sizeCheck !== null) {
+            return response.status(500).json({
+              code: 500,
+              status: 'fail',
+              message: 'Product size deleted fail',
+            })
+          } else {
+            return response.status(200).json({
+              code: 200,
+              status: 'success',
+              message: 'Product size deleted successfully',
+            })
+          }
+        } else {
+          return response.status(404).json({
+            code: 404,
+            status: 'not found',
+            message: 'Size not found'
+          })
+        }
       } else {
-
         return response.status(401).json({
           code: 401,
           status: 'unauthorized',
-          message: 'Your role access is not sufficient for this action',
+          message: 'Your role access is not sufficient for this action'
         })
-
       }
     } catch (error) {
-
       return response.status(500).json({
         code: 500,
-        status: "fail",
+        status: 'fail',
         message: error
       })
-
     }
   }
 }
