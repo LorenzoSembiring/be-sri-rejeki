@@ -1,0 +1,49 @@
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import UsersController from './UsersController'
+import Size from 'App/Models/Size'
+
+export default class StocksController {
+  public async update({ params, request, response, auth }: HttpContextContract) {
+    const usersController = new UsersController()
+    const { stok } = request.body()
+
+    try {
+      const user = await auth.authenticate()
+      var role = await usersController.getRole(user)
+
+      const stock = await Size.findBy('id', params.id)
+
+      if (role == 'admin' && stock) {
+
+        stock.stock = stok
+        await stock.save()
+
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          message: 'update success'
+        })
+
+      } else if(role == 'admin' && !stock) {
+        return response.status(404).json({
+          code: 404,
+          status: 'not found',
+          message: 'Size not found'
+        })
+      }
+       else {
+        return response.status(401).json({
+          code: 401,
+          status: 'Unauthorized',
+          message: 'Your role access is not sufficient for this action'
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error
+      })
+    }
+  }
+}
