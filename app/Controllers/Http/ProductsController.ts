@@ -177,5 +177,98 @@ export default class ProductsController {
     //   data: arrNumber
     // })
   }
-  
+  public async activate( {params, response, auth}: HttpContextContract) {
+    const usersController = new UsersController()
+
+    try {
+      const user = await auth.authenticate()
+      var role = await usersController.getRole(user)
+
+      const product = await Product.findBy('id', params.id)
+      if (role == "admin" && product && product.status != "ACTIVE") {
+
+        product.status = "ACTIVE";
+        await product.save()
+
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          message: 'Product activated'
+        })
+
+      } else if (role == "admin" && product?.status == "ACTIVE") {
+        return response.status(200).json({
+          cde: 200,
+          status: "success",
+          mesage: "Product already activated"
+        })
+      }
+       else if (product == null) {
+        return response.status(404).json({
+          cde: 404,
+          status: "not found",
+          mesage: "Product not found"
+        })
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action'
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error
+      })
+    }
+  }
+  public async deactivate( {params, response, auth}: HttpContextContract) {
+    const usersController = new UsersController()
+
+    try {
+      const user = await auth.authenticate()
+      var role = await usersController.getRole(user)
+
+      const product = await Product.findBy('id', params.id)
+      if (role == "admin" && product && product.status != "DEACTIVE") {
+
+        product.status = "DEACTIVE";
+        await product.save()
+
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          message: 'Product deactivated'
+        })
+
+      } else if (role == "admin" && product?.status == "DEACTIVE") {
+        return response.status(200).json({
+          cde: 200,
+          status: "success",
+          mesage: "Product already deactivated"
+        })
+      }
+       else if (product == null) {
+        return response.status(404).json({
+          cde: 404,
+          status: "not found",
+          mesage: "Product not found"
+        })
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action'
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error
+      })
+    }
+  }
 }
