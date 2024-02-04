@@ -58,20 +58,20 @@ export default class ProductsController {
       })
     }
   }
-  public async get({ request, response }: HttpContextContract) {
-    const category = request.body()
+  public async getByCategory({ request, response }: HttpContextContract) {
+    const category = request.input("category")
     try {
       const product = await Database.from('products').where({ category_id: category })
       return response.status(200).json({
         code: 200,
         status: 'success',
-        data: product,
+        data: product
       })
     } catch (error) {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error,
+        message: error
       })
     }
   }
@@ -99,7 +99,7 @@ export default class ProductsController {
       const user = await auth.authenticate()
       var role = await usersController.getRole(user)
       if (role === 'admin') {
-        const input = request.only(['name', 'description', 'price', 'size', 'category_id'])
+        const input = request.only(['name', 'description', 'price', 'category_id'])
 
         const product = await Product.findBy('id', params.id)
         product?.merge(input)
