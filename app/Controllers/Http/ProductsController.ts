@@ -25,6 +25,7 @@ export default class ProductsController {
           description: description,
           price: price,
           category_id: category_id,
+          status: "ACTIVE"
         })
 
         var arr = this.split(size)
@@ -176,4 +177,5 @@ export default class ProductsController {
     //   data: arrNumber
     // })
   }
+  
 }

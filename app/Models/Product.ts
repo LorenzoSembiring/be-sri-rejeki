@@ -15,11 +15,11 @@ export default class Product extends BaseModel {
   public price: number
 
   @column()
-  public size: number
+  public status: string
 
   @column()
   public category_id: number
-  
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
