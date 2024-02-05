@@ -4,20 +4,20 @@ import Cart from 'App/Models/Cart'
 export default class CartsController {
 
   public async insertToCart({ request, response, auth }: HttpContextContract) {
-    const {product_id, quanity} = request.body()
+    const {product_id, quantity} = request.body()
     const user = await auth.authenticate()
     try {
       if(!user) {
-        return response.status(201).json({
+        return response.status(401).json({
           code: 401,
           status: "unauthorized",
-          message: "You should login first",
+          message: "You should login first"
         })
       } else {
         const cart = await Cart.create({
           user_id: user.id,
           product_id: product_id,
-          quanity: quanity
+          quantity: quantity
         })
         return response.status(201).json({
           code: 201,

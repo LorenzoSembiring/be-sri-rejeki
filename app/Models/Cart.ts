@@ -12,7 +12,7 @@ export default class Cart extends BaseModel {
   public product_id: number
 
   @column()
-  public quanity: number
+  public quantity: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
