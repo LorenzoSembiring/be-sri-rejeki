@@ -26,6 +26,7 @@ import './routes/category'
 import './routes/auth'
 import './routes/size'
 import './routes/stock'
+import './routes/cart'
 
 Route.get('/', async () => {
   return { hello: 'world' }

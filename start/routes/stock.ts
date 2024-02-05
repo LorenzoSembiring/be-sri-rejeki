@@ -2,6 +2,6 @@ import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() => {
 
-  Route.put('update-stock/:id', 'StocksController.update')
+  Route.put('update/:id', 'StocksController.update')
 
-}).prefix('/api')
+}).prefix('/api/product/stock')
