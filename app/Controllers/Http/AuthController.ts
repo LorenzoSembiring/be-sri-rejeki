@@ -1,30 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class AuthController {
-  public async tokenCheck({ auth, response }: HttpContextContract) {
-    try {
-      await auth.authenticate()
-
-      return response.status(200).json({
-        code: 200,
-        message: "Token valid"
-      })
-    } catch (error) {
-      if (error.responseText == "E_INVALID_API_TOKEN: Invalid API token") {
-        return response.status(401).json({
-          code: 401,
-          message: "Token Invalid"
-        })
-
-      } else {
-        return response.status(500).json({
-          code: 500,
-          message: "Error"
-        })
-      }
-    }
-  }
-
   public async check({ auth, response }: HttpContextContract) {
     try {
       const user = await auth.check()
