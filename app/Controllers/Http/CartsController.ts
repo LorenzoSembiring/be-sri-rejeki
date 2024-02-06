@@ -7,13 +7,32 @@ export default class CartsController {
     try {
       const { product_id, quantity } = request.body()
       const user = await auth.authenticate()
+      const cart = await Cart.query()
+      .where("user_id", user.id)
+      .where("product_id", product_id)
+      .first()
+      const intQuantity = parseInt(quantity)
+      const cartQuantity = parseInt(JSON.stringify(cart?.quantity))
+
       if (!user) {
         return response.status(401).json({
           code: 401,
           status: 'unauthorized',
           message: 'You should login first',
         })
-      } else {
+      } else if(user && cart) {
+        //handling when the cart for correspond product and user is exist, it will change the existing cart quantity
+        cart.quantity = cartQuantity + intQuantity
+        await cart.save()
+
+        return response.status(200).json({
+          code: 200,
+          status: 'created',
+          message: 'Cart added successfully',
+          data: cart,
+        })
+      }
+       else {
         const cart = await Cart.create({
           user_id: user.id,
           product_id: product_id,
@@ -30,7 +49,7 @@ export default class CartsController {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error,
+        message: error
       })
     }
   }
