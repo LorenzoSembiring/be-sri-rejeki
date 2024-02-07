@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Cart from 'App/Models/Cart'
+import Size from 'App/Models/Size'
 import StocksController from './StocksController'
 
 export default class CartsController {
@@ -17,11 +18,12 @@ export default class CartsController {
       const intQuantity = parseInt(quantity)
       //initial quantity
       const cartQuantity = parseInt(JSON.stringify(cart?.quantity))
-
+      //get stock
       const stockController = new StocksController()
       const paramSizeId = request.input('size_id')
       const sizeId = parseInt(paramSizeId)
       const stock = await stockController.stockCheck(sizeId)
+
       const isStockAvailable = stock! > 0 && stock! >= quantity;
 
       if (!user) {
@@ -31,9 +33,9 @@ export default class CartsController {
           message: 'You should login first'
         })
       } else if(!isStockAvailable) {
-        return response.status(200).json({
-          code: 200,
-          status: 'success',
+        return response.status(400).json({
+          code: 400,
+          status: 'bad request',
           message: 'Stock unavailable'
         })
       }
@@ -41,6 +43,14 @@ export default class CartsController {
         //handling when the cart for correspond product and user is exist, it will change the existing cart quantity
         cart.quantity = cartQuantity + intQuantity
         await cart.save()
+
+        const size = await Size.find(sizeId);
+        if (size) {
+          if (stock !== undefined) {
+          size.stock -= 1;
+          }
+          await size.save();
+        }
 
         return response.status(200).json({
           code: 200,
@@ -55,6 +65,15 @@ export default class CartsController {
           size_id: size_id,
           quantity: quantity,
         })
+
+        const size = await Size.find(sizeId);
+        if (size) {
+          if (stock !== undefined) {
+          size.stock -= 1;
+          }
+          await size.save();
+        }
+
         return response.status(201).json({
           code: 201,
           status: 'created',
