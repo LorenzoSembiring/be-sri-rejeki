@@ -1,26 +1,43 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Cart from 'App/Models/Cart'
+import StocksController from './StocksController'
 
 export default class CartsController {
   public async insertToCart({ request, response, auth }: HttpContextContract) {
     try {
-      const { product_id, quantity } = request.body()
+      const { size_id, quantity } = request.body()
       const user = await auth.authenticate()
+      //get the cart
       const cart = await Cart.query()
       .where("user_id", user.id)
-      .where("product_id", product_id)
+      .where("size_id", size_id)
       .first()
+      // inputed quantity
       const intQuantity = parseInt(quantity)
+      //initial quantity
       const cartQuantity = parseInt(JSON.stringify(cart?.quantity))
+
+      const stockController = new StocksController()
+      const paramSizeId = request.input('size_id')
+      const sizeId = parseInt(paramSizeId)
+      const stock = await stockController.stockCheck(sizeId)
+      const isStockAvailable = stock! > 0 && stock! >= quantity;
 
       if (!user) {
         return response.status(401).json({
           code: 401,
           status: 'unauthorized',
-          message: 'You should login first',
+          message: 'You should login first'
         })
-      } else if(user && cart) {
+      } else if(!isStockAvailable) {
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          message: 'Stock unavailable'
+        })
+      }
+       else if(user && cart && isStockAvailable) {
         //handling when the cart for correspond product and user is exist, it will change the existing cart quantity
         cart.quantity = cartQuantity + intQuantity
         await cart.save()
@@ -29,13 +46,13 @@ export default class CartsController {
           code: 200,
           status: 'created',
           message: 'Cart added successfully',
-          data: cart,
+          data: cart
         })
       }
        else {
         const cart = await Cart.create({
           user_id: user.id,
-          product_id: product_id,
+          size_id: size_id,
           quantity: quantity,
         })
         return response.status(201).json({
@@ -135,11 +152,13 @@ export default class CartsController {
         const cart = await Database
           .from('carts')
           .where('carts.user_id', user.id)
-          .join('products', 'carts.product_id', '=', 'products.id')
+          .join('sizes', 'carts.size_id', '=', 'sizes.id')
+          .join('products', 'sizes.product_id', '=', 'products.id')
           .select(
             'carts.quantity',
             'products.id',
             'products.name',
+            'sizes.size',
             'products.description',
             'products.price'
           )
@@ -172,14 +191,15 @@ export default class CartsController {
         const data = await Database
           .from('carts')
           .where('carts.user_id', user.id)
-          .join('products', 'carts.product_id', '=', 'products.id')
+          .join('sizes', 'carts.size_id', '=', 'sizes.id')
+          .join('products', 'sizes.product_id', '=', 'products.id')
           .select('products.price')
           .sum("price as total")
 
           return response.status(200).json({
             code: 200,
             status: 'success',
-            data: data
+            data: data[0]
           })
       }
     } catch (error) {
