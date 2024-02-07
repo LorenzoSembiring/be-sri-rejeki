@@ -48,9 +48,9 @@ export default class StocksController {
   }
   public async stockCheck(IDsize) {
     try {
-      const stock = await Size.find(IDsize)
-      const size = stock?.size
-      return size
+      const size = await Size.find(IDsize)
+      const stock = size?.stock
+      return stock
     } catch (error) {
       return null
     }
