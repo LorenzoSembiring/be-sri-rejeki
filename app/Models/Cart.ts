@@ -9,7 +9,7 @@ export default class Cart extends BaseModel {
   public user_id: number
 
   @column()
-  public product_id: number
+  public size_id: number
 
   @column()
   public quantity: number
