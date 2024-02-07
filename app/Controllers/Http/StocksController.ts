@@ -46,4 +46,22 @@ export default class StocksController {
       })
     }
   }
+  public async stockCheck(IDsize) {
+    try {
+      const stock = await Size.find(IDsize)
+      const size = stock?.size
+      return size
+    } catch (error) {
+      return null
+    }
+  }
+
+
+  // public stockCheck(number) {
+  //   try {
+  //     return Size.query().where('id', '=', number)
+  //   } catch (error) {
+  //     return 0
+  //   }
+  // }
 }
