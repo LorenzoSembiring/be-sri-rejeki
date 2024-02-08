@@ -55,13 +55,33 @@ export default class PicturesController {
         })
       }
     } catch (error) {
-      console.log(error)
       return response.status(500).json({
         code: 500,
         status: "fail",
         message: error,
 
       })
+    }
+  }
+
+  private async pictureCheck(user, path) {
+
+    const usersController = new UsersController()
+    const role = await usersController.getRole(user)
+
+    try {
+      if(role =="admin"){
+
+        const picture = await Picture.findBy("path", path)
+
+      if (picture) {
+        return true
+      } else {
+        return false
+      }
+    }
+    } catch (error) {
+      return false
     }
   }
 }
