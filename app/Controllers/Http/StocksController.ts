@@ -56,12 +56,4 @@ export default class StocksController {
     }
   }
 
-
-  // public stockCheck(number) {
-  //   try {
-  //     return Size.query().where('id', '=', number)
-  //   } catch (error) {
-  //     return 0
-  //   }
-  // }
 }
