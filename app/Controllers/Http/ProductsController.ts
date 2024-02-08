@@ -271,4 +271,16 @@ export default class ProductsController {
       })
     }
   }
+  public async checkProduct(productID) {
+    try {
+      const product = await Product.find(productID)
+      if(product) {
+        return true
+      } else {
+        return false
+      }
+    } catch (error) {
+      return 0
+    }
+  }
 }
