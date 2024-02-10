@@ -90,8 +90,65 @@ export default class PicturesController {
       })
     }
   }
-  
-  public async destroy({ request, response, auth }: HttpContextContract) {
+
+  public async update ({ params, request, response, auth }: HttpContextContract) {
+    try {
+      const usersController = new UsersController()
+      const user = await auth.authenticate()
+      const role = await usersController.getRole(user)
+      const picture = await this.getPath(user, params.id)
+      const oldPath = picture?.path
+
+      if(role == "admin") {
+        if (picture) {
+
+          const file = request.file('file', {
+            size: '2mb',
+            extnames: ['jpg', 'png', 'jpeg']
+          })
+
+          await file?.moveToDisk('./')
+          const fileName = file?.fileName
+
+          if(fileName != undefined) {
+            picture.path = fileName
+          }
+          if (oldPath != undefined) {
+            await Drive.delete(oldPath)
+          }
+          await picture.save()
+
+          return response.status(200).json({
+            code: 200,
+            status: "success",
+            message: "Picture updated successfully",
+            data: oldPath
+          })
+
+        } else {
+          return response.status(404).json({
+            code: 404,
+            status:"not found",
+            message: "Picture to correspond product not found!"
+          })
+        }
+
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: "Unauthorized",
+          message: "Your role access is not sufficient for this action"
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status:"fail",
+        message: error
+      })
+    }
+  }
+
   public async destroy({ params, response, auth }: HttpContextContract) {
     try {
 
