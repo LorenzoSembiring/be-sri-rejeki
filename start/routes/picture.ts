@@ -5,6 +5,6 @@ Route.group(() => {
     Route.post('store', 'PicturesController.store')
     Route.get('get/:id', 'PicturesController.get')
     Route.put('update/:id', 'PicturesController.update')
-    Route.delete('delete/:id', 'PicturesController.destroy')
+    Route.delete('delete', 'PicturesController.destroy')
 
 }).prefix('/api/product/picture')

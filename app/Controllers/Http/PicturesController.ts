@@ -1,9 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import UsersController from './UsersController'
 import ProductsController from './ProductsController'
-import Application from '@ioc:Adonis/Core/Application'
 import Picture from 'App/Models/Picture'
-
+import Drive from '@ioc:Adonis/Core/Drive'
 
 export default class PicturesController {
   public async store({ request, response, auth }: HttpContextContract) {
@@ -53,6 +52,50 @@ export default class PicturesController {
           status: "Unauthorized",
           message: "Your role access is not sufficient for this action"
         })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: "fail",
+        message: error,
+
+      })
+    }
+  }
+
+  public async destroy({ request, response, auth }: HttpContextContract) {
+    try {
+
+      const usersController = new UsersController()
+      const user = await auth.authenticate()
+      const role = await usersController.getRole(user)
+      const check = await this.pictureCheck(user, request.input("path"))
+
+      if (role == "admin") {
+        if (check) {
+
+          const picture = await Picture.findByOrFail("path", request.input("path"))
+
+          await Drive.delete(request.input("path"))
+          await picture.delete()
+
+          return response.status(200).json({
+            code: 200,
+            status: "success",
+            message: "Picture removed successfilly!"
+          })
+
+        } else {
+
+          return response.status(404).json({
+            code: 404,
+            status: "not found",
+            message: "Picture not found"
+          })
+
+        }
+      } else {
+
       }
     } catch (error) {
       return response.status(500).json({
