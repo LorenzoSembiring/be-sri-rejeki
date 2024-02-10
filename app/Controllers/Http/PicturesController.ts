@@ -63,6 +63,34 @@ export default class PicturesController {
     }
   }
 
+  public async index({ params, response }: HttpContextContract) {
+    try {
+
+      const picture = await Picture.query().where("product_id", params.id)
+
+      if(picture.length != 0) {
+        console.log(picture)
+        return response.status(200).json({
+          code: 200,
+          status: "success",
+          data: picture
+        })
+      } else {
+        return response.status(404).json({
+          code: 404,
+          status: "not found",
+          message: "Picture to correspond product not found!"
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: "fail",
+        message: error
+      })
+    }
+  }
+  
   public async destroy({ request, response, auth }: HttpContextContract) {
     try {
 
