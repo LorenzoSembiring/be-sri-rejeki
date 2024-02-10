@@ -135,7 +135,7 @@ export default class PicturesController {
     }
   }
 
-  private async pictureCheck(user, path) {
+  private async getPath(user, id) {
 
     const usersController = new UsersController()
     const role = await usersController.getRole(user)
@@ -143,16 +143,16 @@ export default class PicturesController {
     try {
       if(role =="admin"){
 
-        const picture = await Picture.findBy("path", path)
+        const picture = await Picture.find(id)
 
-      if (picture) {
-        return true
-      } else {
-        return false
+        if (picture) {
+          return picture
+        } else {
+          return null
+        }
       }
-    }
     } catch (error) {
-      return false
+      return null
     }
   }
 }
