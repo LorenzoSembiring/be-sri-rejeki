@@ -92,25 +92,24 @@ export default class PicturesController {
   }
   
   public async destroy({ request, response, auth }: HttpContextContract) {
+  public async destroy({ params, response, auth }: HttpContextContract) {
     try {
 
       const usersController = new UsersController()
       const user = await auth.authenticate()
       const role = await usersController.getRole(user)
-      const check = await this.pictureCheck(user, request.input("path"))
+      const picture = await this.getPath(user, params.id)
 
       if (role == "admin") {
-        if (check) {
+        if (picture) {
 
-          const picture = await Picture.findByOrFail("path", request.input("path"))
-
-          await Drive.delete(request.input("path"))
+          await Drive.delete(picture.path)
           await picture.delete()
 
           return response.status(200).json({
             code: 200,
             status: "success",
-            message: "Picture removed successfilly!"
+            message: "Picture removed successfully!"
           })
 
         } else {
