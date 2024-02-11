@@ -28,6 +28,7 @@ import './routes/size'
 import './routes/stock'
 import './routes/cart'
 import './routes/picture'
+import './routes/mesh'
 
 Route.get('/', async () => {
   return { hello: 'world' }
