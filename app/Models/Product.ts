@@ -18,7 +18,13 @@ export default class Product extends BaseModel {
   public status: string
 
   @column()
+  public texture: string
+
+  @column()
   public category_id: number
+
+  @column()
+  public mesh_id: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
