@@ -6,6 +6,9 @@ export default class Mesh extends BaseModel {
   public id: number
 
   @column()
+  public name: string
+  
+  @column()
   public path: string
 
   @column.dateTime({ autoCreate: true })
