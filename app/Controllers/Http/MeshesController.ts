@@ -49,4 +49,24 @@ export default class MeshesController {
       })
     }
   }
+  public async get({ params, response }: HttpContextContract) {
+    try {
+
+      const mesh = await Mesh.find(params.id)
+      const server: string = process.env.server!
+
+      return response.status(200).json({
+        code: 200,
+        status: "success",
+        data: "http://" + server + "/" + mesh?.path
+      })
+
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: "fail",
+        message: error
+      })
+    }
+  }
 }
