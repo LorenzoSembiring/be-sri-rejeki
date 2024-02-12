@@ -179,7 +179,11 @@ export default class PicturesController {
 
         }
       } else {
-
+        return response.status(401).json({
+          code: 401,
+          status: "Unauthorized",
+          message: "Your role access is not sufficient for this action"
+        })
       }
     } catch (error) {
       return response.status(500).json({
