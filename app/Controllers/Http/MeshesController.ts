@@ -125,5 +125,37 @@ export default class MeshesController {
       })
     }
   }
+  public async destroy({ params, response, auth }: HttpContextContract) {
+    try {
+      const usersController: UsersController = new UsersController()
+      const user: User = await auth.authenticate()
+      const role: string = await usersController.getRole(user)
+      const mesh: Mesh | null = await Mesh.find(params.id)
+      if (role == "admin") {
+        if (mesh) {
 
+          await Drive.delete(mesh?.path)
+          await mesh.delete()
+
+          return response.status(200).json({
+            ccode: 200,
+            status: "success",
+            message: "Picture removed successfully!"
+          })
+        }
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: "Unauthorized",
+          message: "Your role access is not sufficient for this action"
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: "fail",
+        message: error
+      })
+    }
+  }
 }
