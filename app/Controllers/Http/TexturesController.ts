@@ -4,6 +4,25 @@ import User from 'App/Models/User'
 import Product from 'App/Models/Product'
 
 export default class TexturesController {
+  public async get({ params, response }: HttpContextContract) {
+    try {
+      const product: Product | null = await Product.find(params.id)
+      const path: string | undefined = product?.texture
+      const data: string = "http://" + process.env.server! + "/" + path
+
+      return response.status(200).json({
+        code: 200,
+        status: "success",
+        data: data
+      })
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: "fail",
+        message: error
+      })
+    }
+  }
   public async update ({ params, request, response, auth }: HttpContextContract) {
     try {
       const usersController: UsersController = new UsersController()
