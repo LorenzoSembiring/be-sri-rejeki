@@ -29,6 +29,7 @@ import './routes/stock'
 import './routes/cart'
 import './routes/picture'
 import './routes/mesh'
+import './routes/texture'
 
 Route.get('/', async () => {
   return { hello: 'world' }
