@@ -87,7 +87,31 @@ export default class ProductsController {
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        sttaus: 'fail',
+        status: 'fail',
+        message: error,
+      })
+    }
+  }
+  public async get({ params, response }: HttpContextContract) {
+    try {
+      const product = await Product.find(params.id)
+      if (product) {
+        return response.status(200).json({
+          code: 200,
+          status: "success",
+          data: product
+        })
+      } else {
+        return response.status(404).json({
+          code: 404,
+          status: "not found"
+        })
+
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
         message: error,
       })
     }
