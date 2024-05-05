@@ -4,7 +4,7 @@ Route.group(() => {
 
     Route.post('store', 'ProductsController.store')
     Route.get('get-by-category', 'ProductsController.getByCategory')
-    Route.get('index', 'ProductsController.getAll')
+    Route.get('index', 'ProductsController.getPaginated')
     Route.get('get/:id', 'ProductsController.get')
     Route.get('activate/:id', 'ProductsController.activate')
     Route.get('deactivate/:id', 'ProductsController.deactivate')
