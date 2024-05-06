@@ -129,6 +129,36 @@ export default class ProductsController {
       })
     }
   }
+  public async getAdmin({ request, response }: HttpContextContract) {
+    const req = request.qs()
+    try {
+      const product = await await Database.rawQuery(
+        'SELECT p.id, p.name, p.description, p.price, p.status, c.name AS "category" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id  LIMIT :limit OFFSET :offset;',
+        {
+          limit: parseInt(req.limit),
+          offset: req.page-1
+        }
+      )
+      if (product[0].length > 0) {
+        return response.status(200).json({
+          code: 200,
+          status: "success",
+          data: product[0]
+        })
+      } else {
+        return response.status(404).json({
+          code: 404,
+          status: "not found"
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error,
+      })
+    }
+  }
   public async update({ params, request, response, auth }: HttpContextContract) {
     const usersController = new UsersController()
 
