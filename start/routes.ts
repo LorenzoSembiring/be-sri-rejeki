@@ -31,6 +31,7 @@ import './routes/picture'
 import './routes/mesh'
 import './routes/texture'
 import './routes/order'
+import './routes/statistic'
 
 Route.get('/', async () => {
   return { hello: 'world' }
