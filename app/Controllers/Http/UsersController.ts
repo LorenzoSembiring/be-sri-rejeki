@@ -110,7 +110,7 @@ export default class UsersController {
   public async getRole(user) {
     const userID = user.id
     var roleID = await Database.rawQuery(
-      'SELECT role FROM `roles` WHERE roles.id IN (SELECT id_role FROM user_roles where id_user = :user);',
+      'SELECT `role` FROM `users` WHERE id = :user;',
       {
         user: userID,
       }
