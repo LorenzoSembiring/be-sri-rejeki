@@ -14,6 +14,7 @@ export default class extends BaseSeeder {
         phone: '628123123123',
         first_name: 'admin',
         last_name: 'admin',
+        role: role.admin
       },
       {
         username: 'User',
@@ -22,7 +23,12 @@ export default class extends BaseSeeder {
         phone: '628123123123',
         first_name: 'user',
         last_name: 'user',
+        role: role.user
       },
     ])
   }
+}
+enum role {
+  admin = "admin",
+  user = "user"
 }

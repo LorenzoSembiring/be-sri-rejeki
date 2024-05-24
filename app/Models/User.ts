@@ -23,9 +23,16 @@ export default class User extends BaseModel {
   @column()
   public last_name:string
 
+  @column()
+  public role: role
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+}
+enum role {
+  admin = "admin",
+  user = "user"
 }

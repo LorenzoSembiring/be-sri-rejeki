@@ -13,6 +13,7 @@ export default class extends BaseSchema {
       table.string('picture').nullable()
       table.string('first_name').notNullable()
       table.string('last_name').notNullable()
+      table.enum('role', ['user', 'admin']).notNullable()
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
