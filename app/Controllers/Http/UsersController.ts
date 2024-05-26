@@ -78,11 +78,28 @@ export default class UsersController {
   }
 
   public async logout({ response, auth }: HttpContextContract) {
-    await auth.use('api').revoke()
+    try {
+      await auth.use('api').revoke()
+      const data = await auth.check()
 
-    return response.status(200).json({
-      message: 'Logout success',
-    })
+      if (data == false) {
+        return response.status(200).json({
+          code: 200,
+          status: 'success'
+        })
+      } else {
+        return response.status(400).json({
+          code: 400,
+          message: 'Bad Request'
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        message: 'Error',
+      })
+    }
+
   }
 
   public async updatePicture({ request, response, auth }: HttpContextContract) {
@@ -109,12 +126,9 @@ export default class UsersController {
   }
   public async getRole(user) {
     const userID = user.id
-    var roleID = await Database.rawQuery(
-      'SELECT `role` FROM `users` WHERE id = :user;',
-      {
-        user: userID,
-      }
-    )
+    var roleID = await Database.rawQuery('SELECT `role` FROM `users` WHERE id = :user;', {
+      user: userID,
+    })
 
     const role = roleID[0][0]['role']
 
