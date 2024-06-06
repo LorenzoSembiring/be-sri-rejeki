@@ -7,6 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
       table.integer('product_id').unsigned().references('products.id').onDelete('CASCADE')
+      table.integer('index').unsigned().notNullable()
       table.string('path').notNullable()
 
       /**

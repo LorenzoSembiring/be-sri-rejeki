@@ -9,6 +9,9 @@ export default class Picture extends BaseModel {
   public product_id: number
 
   @column()
+  public index: number
+
+  @column()
   public path: string
 
   @column.dateTime({ autoCreate: true })
