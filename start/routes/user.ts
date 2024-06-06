@@ -4,6 +4,6 @@ Route.group(() => {
 
     Route.post('register', 'UsersController.register')
     Route.post('login', 'UsersController.login')
-    Route.post('logout', 'UsersController.logout')
+    Route.get('logout', 'UsersController.logout')
 
 }).prefix('/api/user')
