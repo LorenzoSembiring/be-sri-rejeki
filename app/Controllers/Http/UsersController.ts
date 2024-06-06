@@ -59,7 +59,7 @@ export default class UsersController {
       }
 
       const token = await auth.use('api').generate(user, {
-        expiresIn: '1 hours',
+        expiresIn: '12 hours',
       })
       return response.status(200).json({
         code: '200',
