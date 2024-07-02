@@ -115,4 +115,34 @@ export default class StatisticsController {
       })
     }
   }
+  public async getBestSeller({ auth, response }: HttpContextContract) {
+    const usersController = new UsersController()
+    try {
+      const user = await auth.authenticate()
+      const role = await usersController.getRole(user)
+
+      if (role == 'admin') {
+        var data = await Database.rawQuery(
+          'SELECT p.name, p.price, SUM(od.quantity) AS sales FROM order_details od JOIN products p ON od.product_id = p.id GROUP BY p.name, p.price ORDER BY sales DESC LIMIT 3;'
+        )
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          data: data[0]
+        })
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action',
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        message: 'fail',
+        error: error,
+      })
+    }
+  }
 }
