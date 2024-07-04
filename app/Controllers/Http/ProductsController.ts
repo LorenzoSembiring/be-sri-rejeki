@@ -102,7 +102,7 @@ export default class ProductsController {
     const req = request.qs()
     try {
       const product = await await Database.rawQuery(
-        'SELECT p.id, p.name, p.description, p.price, c.name AS "category" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id WHERE p.status = "ACTIVE" LIMIT :limit OFFSET :offset;',
+        'SELECT p.id, p.name, p.description, p.price, c.name AS "category", c.id AS "category_id" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id WHERE p.status = "ACTIVE" LIMIT :limit OFFSET :offset;',
         {
           limit: parseInt(req.limit),
           offset: req.page - 1,
