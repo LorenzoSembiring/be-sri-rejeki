@@ -8,7 +8,7 @@ export default class PicturesController {
   public async store({ request, response, auth }: HttpContextContract) {
     try {
 
-      const {product_id} = request.body()
+      const {product_id, index} = request.body()
 
       const usersController = new UsersController()
       const user = await auth.authenticate()
@@ -30,6 +30,7 @@ export default class PicturesController {
 
           const picture = await Picture.create({
             product_id: product_id,
+            index: index,
             path: fileName
           })
 
