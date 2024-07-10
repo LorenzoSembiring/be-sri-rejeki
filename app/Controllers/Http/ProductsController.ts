@@ -224,6 +224,39 @@ export default class ProductsController {
       })
     }
   }
+  public async updatePrice({ params, request, response, auth }: HttpContextContract) {
+    const usersController = new UsersController()
+
+    try {
+      const user = await auth.authenticate()
+      var role = await usersController.getRole(user)
+      if (role === 'admin') {
+        const input = request.only(['price'])
+
+        const product = await Product.findBy('id', params.id)
+        product?.merge(input)
+        await product?.save()
+
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          message: 'update price success',
+        })
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action',
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error,
+      })
+    }
+  }
   public async destroy({ params, response, auth }: HttpContextContract) {
     const usersController = new UsersController()
 
