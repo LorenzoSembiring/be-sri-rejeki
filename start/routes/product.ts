@@ -10,6 +10,7 @@ Route.group(() => {
     Route.get('activate/:id', 'ProductsController.activate')
     Route.get('deactivate/:id', 'ProductsController.deactivate')
     Route.put('update/:id', 'ProductsController.update')
+    Route.put('update-price/:id', 'ProductsController.updatePrice')
     Route.delete('delete/:id', 'ProductsController.destroy')
 
 }).prefix('/api/product')
