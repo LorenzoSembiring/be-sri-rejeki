@@ -13,7 +13,15 @@ export default class ProductsController {
       const user = await auth.authenticate()
       const role = await usersController.getRole(user)
 
-      const { name, description, price, category_id, size, mesh_id, texture } = request.body()
+      const { name, description, price, category_id, size, mesh_id } = request.body()
+
+      const file = request.file('file', {
+        size: '2mb',
+        extnames: ['jpg', 'png', 'jpeg'],
+      })
+
+      await file?.moveToDisk('./')
+      const fileName = file?.fileName
 
       //return model of category or null if not found any
       const category = await Category.findBy('id', category_id)
@@ -26,6 +34,8 @@ export default class ProductsController {
           price: price,
           category_id: category_id,
           status: 'ACTIVE',
+          mesh_id: mesh_id,
+          texture: fileName,
         })
 
         const json = JSON.parse(size)
@@ -33,7 +43,7 @@ export default class ProductsController {
           await Size.create({
             product_id: product.id,
             size: item.size,
-            stock: item.stock
+            stock: item.stock,
           })
         }
 
@@ -54,7 +64,7 @@ export default class ProductsController {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error,
+        message: error.message,
       })
     }
   }
