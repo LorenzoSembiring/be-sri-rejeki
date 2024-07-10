@@ -77,12 +77,15 @@ export default class ProductsController {
   }
   public async get({ params, response }: HttpContextContract) {
     try {
-      const product = await Product.find(params.id)
+      const product = await Database.rawQuery(
+        'select p.*, c.name as category from products p JOIN categories c ON c.id = p.category_id where p.id = ?;',
+        [params.id]
+      )
       if (product) {
         return response.status(200).json({
           code: 200,
           status: 'success',
-          data: product,
+          data: product[0][0],
         })
       } else {
         return response.status(404).json({
