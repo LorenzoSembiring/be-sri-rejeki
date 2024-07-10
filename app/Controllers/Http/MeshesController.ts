@@ -17,7 +17,7 @@ export default class MeshesController {
 
         const file = request.file('file', {
           size: '50mb',
-          extnames: ['glTF', 'obj', 'fbx']
+          extnames: ['glTF', 'obj', 'fbx', 'glb']
         })
 
         await file?.moveToDisk('./mesh',{
@@ -30,7 +30,7 @@ export default class MeshesController {
           path: "mesh/" + fileName
         })
 
-        return response.status(200).json({
+        return response.status(201).json({
           code: 201,
           status: "created",
           message: "Mesh created successfully",
