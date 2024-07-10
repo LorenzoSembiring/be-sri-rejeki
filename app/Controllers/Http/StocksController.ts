@@ -9,7 +9,7 @@ export default class StocksController {
       const productID = params.id
 
       const stok = await await Database.rawQuery(
-        'select s.size, s.stock from sizes s WHERE s.product_id = :id ;',
+        'select s.id, s.size, s.stock from sizes s WHERE s.product_id = :id ;',
         {
           id: productID,
         }
