@@ -127,6 +127,10 @@ export default class CartsController {
       const { quantity } = request.body()
       const user = await auth.authenticate()
       const cart = await Cart.find(params.id)
+      const size = await Size.findBy("size", cart?.size_id)
+      const initialStock = size?.stock
+      const initialQuantity = cart?.quantity
+      const difference = (initialQuantity ?? 0) - quantity;
 
       if (!cart) {
         return response.status(404).json({
@@ -141,6 +145,10 @@ export default class CartsController {
           message: "You don't have permission to do this action"
         })
       } else {
+
+        size!.stock = (initialStock ?? 0) + difference
+        await size?.save()
+
         cart.quantity = quantity
         await cart.save()
 
