@@ -175,7 +175,8 @@ export default class CartsController {
           .join('products', 'sizes.product_id', '=', 'products.id')
           .select(
             'carts.quantity',
-            'products.id',
+            'carts.id',
+            'products.id as product_id',
             'products.name',
             'sizes.size',
             'products.description',
