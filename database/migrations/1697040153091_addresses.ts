@@ -13,6 +13,7 @@ export default class extends BaseSchema {
       table.string('kota').notNullable()
       table.string('provinsi').notNullable()
       table.string('kode_pos').notNullable()
+      table.boolean('selected').notNullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

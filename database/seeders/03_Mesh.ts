@@ -1,14 +1,12 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
-import Category from 'App/Models/Category'
+import Mesh from 'App/Models/Mesh'
 
 export default class extends BaseSeeder {
   public async run () {
-    await Category.createMany([
+    await Mesh.createMany([
       {
-        name: "Kategori 1"
-      },
-      {
-        name: "Kategori 2"
+        name: "3D Blangkon Jogja",
+        path: "mesh/bangkonjogha.glb"
       }
     ])
   }

@@ -10,7 +10,7 @@ export default class extends BaseSeeder {
       {
         username: 'Admin',
         email: 'admin@srirejeki.com',
-        password: await Hash.make('sriRejekiStrongP4$$w0rd'),
+        password: await Hash.make('passwordadmin'),
         phone: '628123123123',
         first_name: 'admin',
         last_name: 'admin',
