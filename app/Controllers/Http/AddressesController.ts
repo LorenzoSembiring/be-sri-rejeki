@@ -5,55 +5,55 @@ import UsersController from './UsersController'
 
 export default class AddressesController {
   public async store({ request, response, auth }: HttpContextContract) {
-    const usersController = new UsersController()
-
     try {
-      const user = await auth.authenticate()
-      var role = await usersController.getRole(user)
+      const user = await auth.authenticate();
+      const isAdmin = (user.role === 'admin');
 
-      if (role === 'admin') {
-        const { user_id, jalan, kelurahan, kecamatan, kota, provinsi, kode_pos } = request.body()
+      let user_id = user.id;
 
-        const address = await Address.create({
-          user_id: user_id,
-          jalan: jalan,
-          kelurahan: kelurahan,
-          kecamatan: kecamatan,
-          kota: kota,
-          provinsi: provinsi,
-          kode_pos: kode_pos,
-        })
-
-        return response.status(201).json({
-          code: 201,
-          status: "success",
-          data: address
-        })
-      } else {
-        const { jalan, kelurahan, kecamatan, kota, provinsi, kode_pos } = request.body()
-
-        const address = await Address.create({
-          user_id: user.id,
-          jalan: jalan,
-          kelurahan: kelurahan,
-          kecamatan: kecamatan,
-          kota: kota,
-          provinsi: provinsi,
-          kode_pos: kode_pos,
-        })
-
-        return response.status(201).json({
-          code: 201,
-          status: "success",
-          data: address
-        })
+      if (isAdmin) {
+        user_id = request.input('user_id');
+        if (!user_id) {
+          return response.status(400).json({
+            code: 400,
+            status: "fail",
+            message: "user_id is required for admin to input address for another user"
+          });
+        }
       }
+
+      const { jalan, kelurahan, kecamatan, kota, provinsi, kode_pos } = request.body();
+
+      const countedAddresses = await Database.from('addresses').where('user_id', user_id).count('* as count');
+      const hasAddresses = countedAddresses[0].count > 0;
+
+      const selected = !hasAddresses;
+
+      const addressData = {
+        user_id,
+        jalan,
+        kelurahan,
+        kecamatan,
+        kota,
+        provinsi,
+        kode_pos,
+        selected
+      };
+
+      const address = await Address.create(addressData);
+
+      return response.status(201).json({
+        code: 201,
+        status: "success",
+        data: address
+      });
+
     } catch (error) {
       return response.status(500).json({
         code: 500,
         status: "fail",
-        message: error
-      })
+        message: "Failed to store address. " + error.message // Improving error message
+      });
     }
   }
 
