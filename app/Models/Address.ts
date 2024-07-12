@@ -26,6 +26,9 @@ export default class Address extends BaseModel {
   @column()
   public kode_pos: number
 
+  @column()
+  public selected: boolean
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
