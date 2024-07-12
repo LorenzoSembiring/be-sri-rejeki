@@ -9,6 +9,12 @@ export default class Address extends BaseModel {
   public user_id: number
 
   @column()
+  public name: string
+
+  @column()
+  public phone: string
+
+  @column()
   public jalan: string
 
   @column()
