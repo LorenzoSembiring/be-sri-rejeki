@@ -119,7 +119,39 @@ export default class AddressesController {
       })
     }
   }
+  public async selectAddress({ params, response, auth }: HttpContextContract) {
+    const user = await auth.authenticate()
+    const userID = user.id
+    try {
+      const address = await Address.findBy('id', params.id)
+      const selectedAddress = await Address.query()
+        .where('user_id', userID)
+        .andWhere('selected', true)
+        .first()
+      // const isSelected = address?.selected
+      // const selected = !isSelected
 
+      if (address?.user_id == userID) {
+        await address.merge({ selected: true }).save()
+        await selectedAddress?.merge({ selected: false }).save()
+        return response.status(200).json({
+          code: '200',
+          status: 'Update success',
+        })
+      } else {
+        return response.status(401).json({
+          code: '401',
+          status: 'unauthorized',
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: '500',
+        status: 'fail',
+        message: error,
+      })
+    }
+  }
   public async destroy({ params, response, auth }: HttpContextContract) {
     const user = await auth.authenticate()
     const userID = user.id
