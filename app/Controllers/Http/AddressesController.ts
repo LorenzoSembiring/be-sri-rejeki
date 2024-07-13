@@ -22,7 +22,8 @@ export default class AddressesController {
         }
       }
 
-      const { name, phone, jalan, kelurahan, kecamatan, kota, provinsi, kode_pos } = request.body()
+      const { label, name, phone, jalan, kelurahan, kecamatan, kota, provinsi, kode_pos } =
+        request.body()
 
       const countedAddresses = await Database.from('addresses')
         .where('user_id', user_id)
@@ -33,6 +34,7 @@ export default class AddressesController {
 
       const addressData = {
         name,
+        label,
         phone,
         user_id,
         jalan,
@@ -84,13 +86,16 @@ export default class AddressesController {
   public async update({ params, request, response, auth }: HttpContextContract) {
     const input = request.only([
       'name',
+      'label',
       'phone',
+      'user_id',
       'jalan',
       'kelurahan',
       'kecamatan',
       'kota',
       'provinsi',
       'kode_pos',
+      'selected',
     ])
     const user = await auth.authenticate()
     const userID = user.id
@@ -128,8 +133,6 @@ export default class AddressesController {
         .where('user_id', userID)
         .andWhere('selected', true)
         .first()
-      // const isSelected = address?.selected
-      // const selected = !isSelected
 
       if (address?.user_id == userID) {
         await address.merge({ selected: true }).save()
@@ -152,6 +155,7 @@ export default class AddressesController {
       })
     }
   }
+
   public async destroy({ params, response, auth }: HttpContextContract) {
     const user = await auth.authenticate()
     const userID = user.id
@@ -160,7 +164,6 @@ export default class AddressesController {
       if (address?.user_id == userID) {
         await address?.delete()
       }
-
       return response.status(200).json({
         code: '200',
         message: 'delete success',
