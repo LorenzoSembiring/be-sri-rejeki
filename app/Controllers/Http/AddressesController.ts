@@ -6,30 +6,34 @@ import UsersController from './UsersController'
 export default class AddressesController {
   public async store({ request, response, auth }: HttpContextContract) {
     try {
-      const user = await auth.authenticate();
-      const isAdmin = (user.role === 'admin');
+      const user = await auth.authenticate()
+      const isAdmin = user.role === 'admin'
 
-      let user_id = user.id;
+      let user_id = user.id
 
       if (isAdmin) {
-        user_id = request.input('user_id');
+        user_id = request.input('user_id')
         if (!user_id) {
           return response.status(400).json({
             code: 400,
-            status: "fail",
-            message: "user_id is required for admin to input address for another user"
-          });
+            status: 'fail',
+            message: 'user_id is required for admin to input address for another user',
+          })
         }
       }
 
-      const { jalan, kelurahan, kecamatan, kota, provinsi, kode_pos } = request.body();
+      const { name, phone, jalan, kelurahan, kecamatan, kota, provinsi, kode_pos } = request.body()
 
-      const countedAddresses = await Database.from('addresses').where('user_id', user_id).count('* as count');
-      const hasAddresses = countedAddresses[0].count > 0;
+      const countedAddresses = await Database.from('addresses')
+        .where('user_id', user_id)
+        .count('* as count')
+      const hasAddresses = countedAddresses[0].count > 0
 
-      const selected = !hasAddresses;
+      const selected = !hasAddresses
 
       const addressData = {
+        name,
+        phone,
         user_id,
         jalan,
         kelurahan,
@@ -37,23 +41,22 @@ export default class AddressesController {
         kota,
         provinsi,
         kode_pos,
-        selected
-      };
+        selected,
+      }
 
-      const address = await Address.create(addressData);
+      const address = await Address.create(addressData)
 
       return response.status(201).json({
         code: 201,
-        status: "success",
-        data: address
-      });
-
+        status: 'success',
+        data: address,
+      })
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        status: "fail",
-        message: "Failed to store address. " + error.message // Improving error message
-      });
+        status: 'fail',
+        message: 'Failed to store address. ' + error.message,
+      })
     }
   }
 
@@ -66,20 +69,29 @@ export default class AddressesController {
 
       return response.status(200).json({
         code: 200,
-        status: "success",
+        status: 'success',
         data: address,
       })
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        status: "fail",
+        status: 'fail',
         message: error,
       })
     }
   }
 
   public async update({ params, request, response, auth }: HttpContextContract) {
-    const input = request.only(['jalan', 'kelurahan', 'kecamatan', 'kota', 'provinsi', 'kode_pos'])
+    const input = request.only([
+      'name',
+      'phone',
+      'jalan',
+      'kelurahan',
+      'kecamatan',
+      'kota',
+      'provinsi',
+      'kode_pos',
+    ])
     const user = await auth.authenticate()
     const userID = user.id
 
@@ -102,7 +114,7 @@ export default class AddressesController {
     } catch (error) {
       return response.status(500).json({
         code: '500',
-        status: "fail",
+        status: 'fail',
         message: error,
       })
     }
