@@ -82,6 +82,26 @@ export default class AddressesController {
       })
     }
   }
+  public async getSelected({ auth, response }: HttpContextContract) {
+    const user = await auth.authenticate()
+    const userID = user.id
+
+    try {
+      const address = await Database.from('addresses').where({ user_id: userID }).andWhere({ selected: 1})
+
+      return response.status(200).json({
+        code: 200,
+        status: 'success',
+        data: address,
+      })
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error,
+      })
+    }
+  }
 
   public async update({ params, request, response, auth }: HttpContextContract) {
     const input = request.only([
