@@ -59,7 +59,7 @@ export default class CartsController {
           data: cart
         })
       }
-       else {
+      else {
         const cart = await Cart.create({
           user_id: user.id,
           size_id: size_id,
@@ -196,6 +196,43 @@ export default class CartsController {
           code: 200,
           status: 'success',
           data: cart
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error
+      })
+    }
+  }
+  public async get({ params, response, auth }: HttpContextContract) {
+    try {
+      const user = await auth.authenticate()
+      if (!user) {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'You should login first',
+        })
+      } else {
+        const cart = await Database
+          .from('carts')
+          .where('carts.id', params.id)
+          .join('sizes', 'carts.size_id', '=', 'sizes.id')
+          .join('products', 'sizes.product_id', '=', 'products.id')
+          .select(
+            'carts.quantity',
+            'products.id',
+            'products.name',
+            'sizes.size',
+            'products.description',
+            'products.price'
+          )
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          data: cart[0]
         })
       }
     } catch (error) {
