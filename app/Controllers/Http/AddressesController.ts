@@ -92,7 +92,7 @@ export default class AddressesController {
       return response.status(200).json({
         code: 200,
         status: 'success',
-        data: address,
+        data: address[0],
       })
     } catch (error) {
       return response.status(500).json({
