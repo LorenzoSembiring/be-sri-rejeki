@@ -127,7 +127,7 @@ export default class CartsController {
       const { quantity } = request.body()
       const user = await auth.authenticate()
       const cart = await Cart.find(params.id)
-      const size = await Size.findBy("size", cart?.size_id)
+      const size = await Size.findBy("id", cart?.size_id)
       const initialStock = size?.stock
       const initialQuantity = cart?.quantity
       const difference = (initialQuantity ?? 0) - quantity;
@@ -162,7 +162,7 @@ export default class CartsController {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error
+        message: error.message
       })
     }
   }
