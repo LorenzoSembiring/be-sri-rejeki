@@ -15,6 +15,9 @@ export default class Product extends BaseModel {
   public price: number
 
   @column()
+  public weight: number
+
+  @column()
   public status: string
 
   @column()
