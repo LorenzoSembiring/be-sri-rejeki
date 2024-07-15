@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class AuthController {
   public async check({ auth, response }: HttpContextContract) {
@@ -26,9 +27,13 @@ export default class AuthController {
   public async userByAuth({ auth, response }: HttpContextContract) {
     try {
       const user = await auth.authenticate()
+      const data = await Database.rawQuery(
+        'select * from users where id = ?',
+        [user.id]
+      )
       return response.status(200).json({
         code: 200,
-        data: user
+        data: data[0][0]
       })
     } catch (error) {
       if (error.responseText == "E_INVALID_API_TOKEN: Invalid API token") {
