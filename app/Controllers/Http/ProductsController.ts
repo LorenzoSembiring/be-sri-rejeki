@@ -115,7 +115,7 @@ export default class ProductsController {
     const req = request.qs()
     try {
       const product = await await Database.rawQuery(
-        'SELECT p.id, p.name, p.description, p.price, c.name AS "category", c.id AS "category_id" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id WHERE p.status = "ACTIVE" LIMIT :limit OFFSET :offset;',
+        'SELECT p.id, p.name, p.description, p.price, p.status, c.name AS "category", c.id AS "category_id", pic.path AS "picture" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id LEFT JOIN `pictures` AS pic ON pic.product_id = p.id AND pic.index = 1 WHERE p.status = "ACTIVE" LIMIT :limit OFFSET :offset;',
         {
           limit: parseInt(req.limit),
           offset: req.page - 1,
@@ -175,7 +175,7 @@ export default class ProductsController {
     const req = request.qs()
     try {
       const product = await await Database.rawQuery(
-        'SELECT p.id, p.name, p.description, p.price, p.status, c.name AS "category" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id  LIMIT :limit OFFSET :offset;',
+        'SELECT p.id, p.name, p.description, p.price, p.status, c.name AS "category", pic.path AS "picture" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id LEFT JOIN `pictures` AS pic ON pic.product_id = p.id AND pic.index = 1 LIMIT :limit OFFSET :offset;',
         {
           limit: parseInt(req.limit),
           offset: req.page - 1,
