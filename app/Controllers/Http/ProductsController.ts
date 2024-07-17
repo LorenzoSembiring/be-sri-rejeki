@@ -20,7 +20,12 @@ export default class ProductsController {
         extnames: ['jpg', 'png', 'jpeg'],
       })
 
-      await file?.moveToDisk('./')
+      const picture = request.file('file', {
+        size: '2mb',
+        extnames: ['jpg', 'png', 'jpeg'],
+      })
+
+      await file?.moveToDisk('./texture')
       const fileName = file?.fileName
 
       //return model of category or null if not found any
@@ -35,7 +40,7 @@ export default class ProductsController {
           category_id: category_id,
           status: 'ACTIVE',
           mesh_id: mesh_id,
-          texture: fileName,
+          texture: "/uploads/texture/" + fileName,
         })
 
         const json = JSON.parse(size)
