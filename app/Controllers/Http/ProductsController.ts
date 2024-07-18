@@ -176,7 +176,7 @@ export default class ProductsController {
       })
     }
   }
-  public async getAdmin({ request, response }: HttpContextContract) {
+  public async indexAdmin({ request, response }: HttpContextContract) {
     const req = request.qs()
     try {
       const product = await await Database.rawQuery(
@@ -203,6 +203,35 @@ export default class ProductsController {
         code: 500,
         status: 'fail',
         message: error,
+      })
+    }
+  }
+  public async getAdmin({ auth, params, response }) {
+    const usersController = new UsersController()
+
+    const user = await auth.authenticate()
+    const role = await usersController.getRole(user)
+    try {
+      if (role === 'admin') {
+        const query = `SELECT p.*, c.name AS category, CONCAT( '[', GROUP_CONCAT( DISTINCT CONCAT('{"path": "', pic.path, '", "index": ', pic.index, '}') ORDER BY pic.index SEPARATOR ', ' ), ']' ) AS pictures, CONCAT( '[', GROUP_CONCAT( DISTINCT CONCAT('{"size": "', s.size, '", "stock": ', s.stock, '}') SEPARATOR ', ' ), ']' ) AS sizes, m.path AS mesh FROM products p JOIN categories c ON c.id = p.category_id LEFT JOIN pictures pic ON pic.product_id = p.id LEFT JOIN meshes m ON m.id = p.mesh_id LEFT JOIN sizes s ON s.product_id = p.id WHERE p.id = ${params.id} GROUP BY p.id, c.name;`
+        const product = await Database.rawQuery(query)
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          data: product[0][0],
+        })
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action',
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error.message,
       })
     }
   }
