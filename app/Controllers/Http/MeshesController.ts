@@ -27,7 +27,8 @@ export default class MeshesController {
         const fileName = file?.fileName
 
         const mesh = await Mesh.create({
-          path: "mesh/" + fileName
+          name: name,
+          path: "/uploads/mesh/" + fileName
         })
 
         return response.status(201).json({
