@@ -51,6 +51,35 @@ export default class MeshesController {
       })
     }
   }
+  public async index({ response, auth }: HttpContextContract) {
+    const usersController = new UsersController()
+    try {
+      const user = await auth.authenticate()
+      var role = await usersController.getRole(user)
+      if (role === 'admin') {
+
+        const data = await Mesh.all()
+
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          data: data
+        })
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action',
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error.message
+      })
+    }
+  }
   public async get({ params, response }: HttpContextContract) {
     try {
 
