@@ -10,7 +10,7 @@ export default class extends BaseSeeder {
         price: 100000,
         weight: 200,
         status: "ACTIVE",
-        texture: "",
+        texture: "/uploads/texture/batik-parang.jpg",
         category_id: 1,
         mesh_id: 1
       },
@@ -20,17 +20,17 @@ export default class extends BaseSeeder {
         price: 50000,
         weight: 200,
         status: "ACTIVE",
-        texture: "",
+        texture: "/uploads/texture/ceplok.jpg",
         category_id: 2,
         mesh_id: 1
       },
       {
-        name: "Blangkon Jogja Motif Batik Semen",
-        description: "<p><strong>Blangkon Jawa Tengah Motif Batik Ceplok</strong></p><p><strong>Deskripsi Produk:</strong></p><p>Blangkon Jawa Tengah Motif Batik Ceplok adalah aksesori tradisional yang indah, dibuat dari bahan berkualitas tinggi dengan motif batik ceplok yang unik. Blangkon ini mencerminkan kekayaan budaya Jawa Tengah yang penuh keanggunan dan makna.</p><p><strong>Fitur Utama:</strong></p><ul><li><strong>Motif Batik Ceplok:</strong> Motif batik ceplok terkenal dengan pola simetrisnya yang indah, melambangkan harmoni dan keteraturan.</li><li><strong>Kualitas Terbaik:</strong> Dibuat dari bahan kain premium yang nyaman dipakai dan awet.</li><li><strong>Desain Asli:</strong> Menggunakan teknik batik tradisional yang mempertahankan keaslian dan keunikan motif.</li></ul>",
+        name: "Blangkon Jogja Motif Batik Kawung",
+        description: "<p><strong>Blangkon Jawa Tengah Motif Batik Kawung</strong></p><p><strong>Deskripsi Produk:</strong></p><p>Blangkon Jawa Tengah Motif Batik Ceplok adalah aksesori tradisional yang indah, dibuat dari bahan berkualitas tinggi dengan motif batik ceplok yang unik. Blangkon ini mencerminkan kekayaan budaya Jawa Tengah yang penuh keanggunan dan makna.</p><p><strong>Fitur Utama:</strong></p><ul><li><strong>Motif Batik Ceplok:</strong> Motif batik ceplok terkenal dengan pola simetrisnya yang indah, melambangkan harmoni dan keteraturan.</li><li><strong>Kualitas Terbaik:</strong> Dibuat dari bahan kain premium yang nyaman dipakai dan awet.</li><li><strong>Desain Asli:</strong> Menggunakan teknik batik tradisional yang mempertahankan keaslian dan keunikan motif.</li></ul>",
         price: 50000,
         weight: 200,
         status: "ACTIVE",
-        texture: "",
+        texture: "/uploads/texture/kawung.jpg",
         category_id: 1,
         mesh_id: 1
       },

@@ -6,7 +6,7 @@ export default class extends BaseSeeder {
     await Mesh.createMany([
       {
         name: "3D Blangkon Jogja",
-        path: "mesh/bangkonjogha.glb"
+        path: "/uploads/mesh/coneuv.glb"
       }
     ])
   }
