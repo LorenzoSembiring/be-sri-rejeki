@@ -3,6 +3,7 @@ import UsersController from './UsersController'
 import Mesh from 'App/Models/Mesh'
 import User from 'App/Models/User'
 import Drive from '@ioc:Adonis/Core/Drive'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class MeshesController {
   public async store({ request, response, auth }: HttpContextContract) {
@@ -180,6 +181,27 @@ export default class MeshesController {
           message: "Your role access is not sufficient for this action"
         })
       }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: "fail",
+        message: error
+      })
+    }
+  }
+  public async get3D({ params, response }: HttpContextContract) {
+    try {
+      const data = await Database.rawQuery(
+        'SELECT p.id, p.texture, m.path FROM products p LEFT JOIN meshes m ON p.mesh_id = m.id WHERE p.id = ?;',
+        [params.id]
+      )
+
+      return response.status(200).json({
+        code: 200,
+        status: "success",
+        data: data[0][0]
+      })
+
     } catch (error) {
       return response.status(500).json({
         code: 500,
