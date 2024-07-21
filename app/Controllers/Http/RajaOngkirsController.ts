@@ -64,14 +64,14 @@ export default class RajaOngkirsController {
     }
   }
   public async getCost({ request, response }: HttpContextContract) {
-    const { origin, destination, weight } = request.body()
+    const { destination, weight } = request.body()
     const destinationID = await this.getCityID(destination)
     var data: string[] = [];
     const courier = ["jne","pos","tiki"]
     try {
       for (let index = 0; index < 3; index++) {
         const formData = new FormData();
-        formData.append("origin", origin);
+        formData.append("origin", 444);
         formData.append("destination", destinationID.id );
         formData.append("weight", weight);
         formData.append("courier", courier[index]);
