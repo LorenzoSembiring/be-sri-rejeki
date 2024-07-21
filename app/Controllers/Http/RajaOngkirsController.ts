@@ -104,11 +104,13 @@ export default class RajaOngkirsController {
     }
   }
   private async getCityID(city: string) {
+    const words: string[] = city.split(' ');
+    const result: string = words.slice(1).join(' ');
     try{
       const data = await Database.rawQuery(
         'SELECT id from raja_ongkir_cities WHERE name LIKE :city;',
         {
-          city: city
+          city: result
         }
       )
       return data[0][0]
