@@ -275,4 +275,14 @@ export default class CartsController {
       })
     }
   }
+  public async getProductID({ params}: HttpContextContract) {
+    try {
+      const data = await Database.rawQuery('select s.product_id from carts c LEFT JOIN sizes s ON c.id = s.id where c.id = ?;',
+        [params.id]
+      )
+      return data[0][0].product_id
+    } catch (error) {
+      return 0
+    }
+  }
 }
