@@ -179,8 +179,10 @@ export default class CartsController {
         const cart = await Database
           .from('carts')
           .where('carts.user_id', user.id)
+          .where('pictures.index', 1)
           .join('sizes', 'carts.size_id', '=', 'sizes.id')
           .join('products', 'sizes.product_id', '=', 'products.id')
+          .join('pictures', 'pictures.product_id', '=', 'products.id')
           .select(
             'carts.quantity',
             'carts.id',
@@ -188,7 +190,8 @@ export default class CartsController {
             'products.name',
             'sizes.size',
             'products.description',
-            'products.price'
+            'products.price',
+            'pictures.path'
           )
           .paginate(request.input('page'), 10)
 
