@@ -8,6 +8,21 @@ export default class Order extends BaseModel {
   @column()
   public user_id: number
 
+  @column()
+  public kurir: string
+
+  @column()
+  public type_kurir: string
+
+  @column()
+  public ongkir: number
+
+  @column()
+  public resi: string
+
+  @column()
+  public midtrans_id: string
+
   @column.dateTime()
   public date: DateTime
 
