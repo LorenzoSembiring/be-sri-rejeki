@@ -2,10 +2,10 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import UsersController from './UsersController'
 import User from 'App/Models/User'
 import Order from 'App/Models/Order'
-import OrderDetail from 'App/Models/OrderDetail'
 import Database from '@ioc:Adonis/Lucid/Database'
 import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
+import OrderDetail from 'App/Models/OrderDetail'
 
 export default class OrdersController {
   public async placingOrder({ request, response, auth }: HttpContextContract) {
@@ -88,13 +88,26 @@ export default class OrdersController {
         midtrans_id: UUID,
         status: 'waiting for payment'
       })
+      const cartArray = cart_id.slice(1, -1).split(',').map(Number);
 
+      const totalCost = await this.getTotalCost(cart_id, ongkir)
       if(order) {
+        cartArray.forEach(async element => {
+          const cart = await Database.rawQuery('SELECT c.quantity, s.product_id FROM carts c LEFT JOIN sizes s on s.id = c.size_id WHERE c.id = :cart;', {
+            cart: element
+          });
+          await OrderDetail.create({
+            order_id: order.id,
+            product_id: cart[0][0].product_id,
+            quantity: cart[0][0].quantity
+          })
+        });
+        const midtrans = await this.midtransPay(totalCost, UUID)
         return response.status(200).json({
           code: 200,
           status: 'success',
           message: 'Order palced',
-          data: order,
+          data: midtrans,
         });
       }
 
