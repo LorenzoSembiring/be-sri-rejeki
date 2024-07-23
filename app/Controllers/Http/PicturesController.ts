@@ -7,60 +7,65 @@ import Drive from '@ioc:Adonis/Core/Drive'
 export default class PicturesController {
   public async store({ request, response, auth }: HttpContextContract) {
     try {
+      const { product_id, index } = request.body();
 
-      const {product_id, index} = request.body()
+      const usersController = new UsersController();
+      const user = await auth.authenticate();
+      const role = await usersController.getRole(user);
 
-      const usersController = new UsersController()
-      const user = await auth.authenticate()
-      const role = await usersController.getRole(user)
+      const productController = new ProductsController();
+      const product = await productController.checkProduct(product_id);
 
-      const productController = new ProductsController()
-      const product = await productController.checkProduct(product_id)
-
-      if(role == "admin") {
+      if (role == "admin") {
         if (product) {
-
           const file = request.file('file', {
             size: '2mb',
-            extnames: ['jpg', 'png', 'jpeg']
-          })
+            extnames: ['jpg', 'png', 'jpeg'],
+          });
 
-          await file?.moveToDisk('./')
-          const fileName = file?.fileName
+          if (file) {
+            await file.moveToDisk('./picture');
+            const fileName = file.fileName;
 
-          const picture = await Picture.create({
-            product_id: product_id,
-            index: index,
-            path: fileName
-          })
+            await Picture.create({
+              product_id: product_id,
+              index: index,
+              path: "/uploads/picture/" + fileName,
+            });
 
-          return response.status(201).json({
-            code: 201,
-            status: "created",
-            data: picture
-          })
-
+            return response.status(201).json({
+              code: 201,
+              status: "created",
+              data: { product_id, index, path: fileName },
+            });
+          } else {
+            return response.status(400).json({
+              code: 400,
+              status: "bad request",
+              message: "No file uploaded",
+            });
+          }
         } else {
           return response.status(404).json({
             code: 404,
             status: "not found",
-            message: "Product not found"
-          })
+            message: "Product not found",
+          });
         }
       } else {
         return response.status(401).json({
           code: 401,
           status: "Unauthorized",
-          message: "Your role access is not sufficient for this action"
-        })
+          message: "Your role access is not sufficient for this action",
+        });
       }
     } catch (error) {
+      console.error(error);
       return response.status(500).json({
         code: 500,
         status: "fail",
-        message: error,
-
-      })
+        message: error.message || "Internal Server Error",
+      });
     }
   }
 
