@@ -106,6 +106,31 @@ export default class OrdersController {
       });
     }
   }
+  private async midtransPay(amount: number, uuid: string) {
+
+    const url = 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+    const data = {
+      transaction_details: { order_id: uuid, gross_amount: amount },
+      credit_card: { secure: true }
+    };
+
+    const config = {
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json',
+        'authorization': process.env.MIDTRANS_KEY
+      }
+    };
+
+    try {
+      const response = await axios.post(url, data, config);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      throw error;
+    }
+  }
   private async getTotalCost(cart_id: string, ongkir: any) {
     const cartArray = JSON.parse(cart_id)
 
