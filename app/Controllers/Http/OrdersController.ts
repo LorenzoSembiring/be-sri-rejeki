@@ -106,6 +106,14 @@ export default class OrdersController {
       });
     }
   }
+  private async getTotalCost(cart_id: string, ongkir: any) {
+    const cartArray = JSON.parse(cart_id)
+
+    const data = await Database.rawQuery('select sum(p.price * c.quantity) as price from carts c LEFT JOIN sizes s on s.id = c.size_id left join products p on p.id = s.product_id where c.id in ( :cart );', {
+      cart: cartArray
+    })
+    return parseInt(data[0][0].price) + parseInt(ongkir)
+  }
 }
 
 enum orderStatus {
