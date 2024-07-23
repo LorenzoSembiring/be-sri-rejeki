@@ -99,9 +99,8 @@ export default class UsersController {
         message: 'Error',
       })
     }
-
   }
-
+  
   public async updatePicture({ request, response, auth }: HttpContextContract) {
     const authenticatedUser = await auth.authenticate()
     const uploadedFile = request.file('picture')
