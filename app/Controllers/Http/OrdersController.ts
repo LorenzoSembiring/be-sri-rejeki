@@ -152,6 +152,23 @@ export default class OrdersController {
     })
     return parseInt(data[0][0].price) + parseInt(ongkir)
   }
+  public async getTransactionHistory({ response, auth }: HttpContextContract) {
+    const user = await auth.authenticate()
+    try{
+      const data = await Database.rawQuery("SELECT o.id, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total', pic.path FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.user_id = ? GROUP BY o.id, p.name, o.ongkir, pic.path;", [user.id])
+      return response.status(200).json({
+        code: 200,
+        status:"success",
+        data: data[0]
+      })
+    } catch(error) {
+      return response.status(500).json({
+        code: 500,
+        status:"fail",
+        error: error.message
+      })
+    }
+  }
 }
 
 enum orderStatus {
