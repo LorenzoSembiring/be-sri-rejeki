@@ -34,6 +34,26 @@ export default class extends BaseSeeder {
         category_id: 1,
         mesh_id: 1
       },
+      {
+        name: "Blangkon Jawa Timur Motif Batik Parang",
+        description: "<p><strong>Blangkon Jawa Timur Motif Batik Parang</strong>: Blangkon tradisional indah dari bahan berkualitas tinggi dengan motif batik parang unik, mencerminkan kekayaan budaya Jawa Timur dengan pola garis miring yang melambangkan kekuatan dan keteguhan, terbuat dari kain premium yang nyaman dan awet, menggunakan teknik batik tradisional untuk keaslian dan keunikan motif.</p>",
+        price: 50000,
+        weight: 200,
+        status: "ACTIVE",
+        texture: "/uploads/texture/batik-parang-1.jpg",
+        category_id: 3,
+        mesh_id: 1
+      },
+      {
+        name: "Udeng Bali Motif Batik Kawung",
+        description: "<p><strong>Udeng Bali Motif Batik Kawung</strong>: Udeng tradisional indah dari bahan berkualitas tinggi dengan motif batik kawung unik, mencerminkan kekayaan budaya Bali dengan pola simetris yang melambangkan keseimbangan dan keanggunan, terbuat dari kain premium yang nyaman dan awet, menggunakan teknik batik tradisional untuk keaslian dan keunikan motif.</p>",
+        price: 40000,
+        weight: 200,
+        status: "ACTIVE",
+        texture: "/uploads/texture/kawung.jpg",
+        category_id: 4,
+        mesh_id: 1
+      },
     ])
   }
 }

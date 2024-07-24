@@ -18,7 +18,17 @@ export default class extends BaseSeeder {
         product_id: 3,
         index: 1,
         path: "/uploads/picture/blangkon-jogja.jpg"
-      }
+      },
+      {
+        product_id: 4,
+        index: 1,
+        path: "/uploads/picture/blangkon-jatim.jpeg"
+      },
+      {
+        product_id: 5,
+        index: 1,
+        path: "/uploads/picture/udeng-bali.jpg"
+      },
     ])
   }
 }

@@ -9,7 +9,13 @@ export default class extends BaseSeeder {
       },
       {
         name: "Blangkon Jawa Tengah"
-      }
+      },
+      {
+        name: "Blangkon Jawa Timur"
+      },
+      {
+        name: "Udeng Bali"
+      },
     ])
   }
 }
