@@ -33,6 +33,7 @@ import './routes/texture'
 import './routes/order'
 import './routes/statistic'
 import './routes/rajaongkir'
+import './routes/dashboard'
 
 Route.get('/', async () => {
   return { hello: 'world' }
