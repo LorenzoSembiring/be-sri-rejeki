@@ -90,6 +90,31 @@ export default class ProductsController {
       })
     }
   }
+  public async indexHome({ response }: HttpContextContract) {
+    try {
+      const product = await await Database.rawQuery(
+        'SELECT p.id, p.name, p.description, p.price, p.status, c.name AS "category", c.id AS "category_id", pic.path AS "picture" FROM `products` AS p JOIN `categories` AS c ON p.category_id = c.id LEFT JOIN `pictures` AS pic ON pic.product_id = p.id AND pic.index = 1 WHERE p.status = "ACTIVE" ORDER BY p.id ASC LIMIT 5;',
+      )
+      if (product[0].length > 0) {
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          data: product[0],
+        })
+      } else {
+        return response.status(404).json({
+          code: 404,
+          status: 'not found',
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error,
+      })
+    }
+  }
   public async get({ params, response }: HttpContextContract) {
     try {
       const product = await Database.rawQuery(
