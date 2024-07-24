@@ -44,9 +44,9 @@ export default class DashboardAdminsController {
     }
     try {
       const data = await Database.rawQuery("SELECT COUNT(id) as total FROM `orders` WHERE status = 'waiting for payment' OR status = 'pending';")
-      return response.status(500).json({
-        code: 500,
-        status: 'fail',
+      return response.status(200).json({
+        code: 200,
+        status: 'success',
         data: data[0][0].total
       })
     } catch (error) {
