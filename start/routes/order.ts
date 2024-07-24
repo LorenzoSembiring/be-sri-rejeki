@@ -6,6 +6,7 @@ Route.group(() => {
     Route.post('placing-order', 'OrdersController.placingOrder')
     Route.post('check-shipping', 'OrdersController.checkShipping')
     Route.get('get/:id', 'OrdersController.get')
+    Route.get('admin-index', 'OrdersController.adminIndex')
     Route.get('waiting-payment', 'OrdersController.getWaitingPayment')
     Route.get('transaction-history', 'OrdersController.getTransactionHistory')
     Route.get('midtrans-status/:id', 'OrdersController.midtransStatus')
