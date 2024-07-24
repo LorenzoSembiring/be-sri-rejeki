@@ -81,7 +81,7 @@ export default class OrdersController {
       }
 
       const order = await Order.create({
-        user_id: 1,
+        user_id: user.id,
         kurir: kurir,
         type_kurir: type_kurir,
         ongkir: ongkir,
