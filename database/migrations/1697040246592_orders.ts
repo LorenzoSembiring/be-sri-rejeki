@@ -12,6 +12,7 @@ export default class extends BaseSchema {
       table.integer('ongkir').notNullable()
       table.string('resi').notNullable()
       table.string('midtrans_id').notNullable()
+      table.string('midtrans_token').notNullable()
       table.datetime('date').notNullable()
       table.string('status').notNullable()
       /**

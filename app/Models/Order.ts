@@ -23,6 +23,9 @@ export default class Order extends BaseModel {
   @column()
   public midtrans_id: string
 
+  @column()
+  public midtrans_token: string
+
   @column.dateTime()
   public date: DateTime
 

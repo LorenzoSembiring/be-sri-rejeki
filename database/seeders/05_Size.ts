@@ -34,6 +34,26 @@ export default class extends BaseSeeder {
         size: 7,
         stock: 100
       },
+      {
+        product_id: 4,
+        size: 6,
+        stock: 100
+      },
+      {
+        product_id: 4,
+        size: 7,
+        stock: 100
+      },
+      {
+        product_id: 5,
+        size: 6,
+        stock: 100
+      },
+      {
+        product_id: 5,
+        size: 7,
+        stock: 100
+      },
     ])
   }
 }
