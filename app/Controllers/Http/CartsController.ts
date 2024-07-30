@@ -94,6 +94,10 @@ export default class CartsController {
     try {
       const user = await auth.authenticate()
       const cart = await Cart.find(params.id)
+      const size = await Size.find(cart?.size_id)
+      const stock = size?.stock
+      const cartQuantity = cart?.quantity
+
       if (!user) {
         return response.status(201).json({
           code: 401,
@@ -107,8 +111,11 @@ export default class CartsController {
           message: "You don't have permission to do this action"
         })
       } else if (cart?.user_id == user.id) {
-        await cart?.delete()
 
+        size!.stock = stock! + cartQuantity!
+        await size?.save()
+
+        await cart?.delete()
         return response.status(200).json({
           code: 200,
           status: 'success',
