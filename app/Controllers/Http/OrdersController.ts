@@ -143,6 +143,27 @@ export default class OrdersController {
       throw error
     }
   }
+  public async midtransStatus({ params, response }: HttpContextContract) {
+    const ORDER_ID = params.id
+    const link = `https://api.sandbox.midtrans.com/v2/${ORDER_ID}/status`
+    try {
+      const data = axios.get(link, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': process.env.MIDTRANS_KEY,
+        },
+      })
+      if ((await data).data.status_code == 200 && (await data).data.transaction_status == 'settlement') {
+        await Database.from('orders').where('midtrans_id', ORDER_ID).update('status', 'processed')
+      }
+      return (await data).data
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        message: 'fail',
+        error: error.message,
+      })
     }
   }
   private async getTotalCost(cart_id: string, ongkir: any) {
