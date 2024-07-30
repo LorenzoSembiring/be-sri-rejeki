@@ -39,7 +39,7 @@ export default class CartsController {
           message: 'Stock unavailable'
         })
       }
-       else if(user && cart && isStockAvailable) {
+      else if(user && cart && isStockAvailable) {
         //handling when the cart for correspond product and user is exist, it will change the existing cart quantity
         cart.quantity = cartQuantity + intQuantity
         await cart.save()
@@ -64,6 +64,7 @@ export default class CartsController {
           user_id: user.id,
           size_id: size_id,
           quantity: quantity,
+          status: 'active'
         })
 
         const size = await Size.find(sizeId);
