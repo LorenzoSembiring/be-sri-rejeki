@@ -192,7 +192,7 @@ export default class OrdersController {
         cart: cartArray,
       }
     )
-    return parseInt(data[0][0].price) + parseInt(ongkir)
+    return parseInt(data[0][0]?.price ?? 0) + parseInt(ongkir)
   }
   public async getWaitingPayment({ response, auth }: HttpContextContract) {
     const user = await auth.authenticate()
