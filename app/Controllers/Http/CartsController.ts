@@ -189,6 +189,7 @@ export default class CartsController {
             'products.id as product_id',
             'products.name',
             'sizes.size',
+            'sizes.stock',
             'products.description',
             'products.price',
             'pictures.path'
@@ -229,6 +230,7 @@ export default class CartsController {
             'products.id',
             'products.name',
             'sizes.size',
+            'sizes.stock',
             'products.description',
             'products.price'
           )
