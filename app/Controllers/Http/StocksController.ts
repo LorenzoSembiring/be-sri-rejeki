@@ -27,6 +27,29 @@ export default class StocksController {
       })
     }
   }
+  public async getBySize({ params, response }: HttpContextContract) {
+    try {
+      const productID = params.id
+
+      const stok = await await Database.rawQuery(
+        'select s.id, s.size, s.stock from sizes s WHERE s.id = :id ;',
+        {
+          id: productID,
+        }
+      )
+      return response.status(200).json({
+        code: 200,
+        message: 'success',
+        data: stok[0],
+      })
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        message: 'error',
+        error: error.message,
+      })
+    }
+  }
   public async update({ params, request, response, auth }: HttpContextContract) {
     const usersController = new UsersController()
     const { stok } = request.body()
