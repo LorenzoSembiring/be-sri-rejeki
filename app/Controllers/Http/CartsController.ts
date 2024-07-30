@@ -70,7 +70,7 @@ export default class CartsController {
         const size = await Size.find(sizeId);
         if (size) {
           if (stock !== undefined) {
-          size.stock -= 1;
+          size.stock -= quantity;
           }
           await size.save();
         }
