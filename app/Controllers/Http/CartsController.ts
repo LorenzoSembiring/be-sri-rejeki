@@ -181,6 +181,7 @@ export default class CartsController {
           .from('carts')
           .where('carts.user_id', user.id)
           .where('pictures.index', 1)
+          .where('carts.status', '!=', 'checked_out')
           .join('sizes', 'carts.size_id', '=', 'sizes.id')
           .join('products', 'sizes.product_id', '=', 'products.id')
           .join('pictures', 'pictures.product_id', '=', 'products.id')
@@ -207,7 +208,7 @@ export default class CartsController {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error
+        message: error.message
       })
     }
   }
