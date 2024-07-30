@@ -268,6 +268,37 @@ export default class OrdersController {
       })
     }
   }
+  public async addResi({ request, response, auth }: HttpContextContract) {
+    const user = await auth.authenticate();
+    const usersController = new UsersController()
+    var role = await usersController.getRole(user)
+
+    if (role !== 'admin') {
+      return response.status(401).json({
+        code: 401,
+        status: 'Unauthorized',
+        message: 'Your role access is not sufficient for this action',
+      })
+    }
+    const {resi, order_id} = request.body()
+    try {
+      const order = await Order.find(order_id)
+      order!.resi = resi
+      await order?.save()
+
+      return response.status(200).json({
+        code: 200,
+        status: 'success',
+        message: 'update success'
+      })
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        error: error.message,
+      });
+    }
+  }
 }
 
 enum orderStatus {

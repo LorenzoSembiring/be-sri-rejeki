@@ -5,6 +5,7 @@ Route.group(() => {
     Route.post('store', 'OrdersController.store')
     Route.post('placing-order', 'OrdersController.placingOrder')
     Route.post('check-shipping', 'OrdersController.checkShipping')
+    Route.post('add-resi', 'OrdersController.addResi')
     Route.get('get/:id', 'OrdersController.get')
     Route.get('admin-index', 'OrdersController.adminIndex')
     Route.get('waiting-payment', 'OrdersController.getWaitingPayment')
