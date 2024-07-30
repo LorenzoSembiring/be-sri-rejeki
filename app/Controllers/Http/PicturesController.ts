@@ -75,7 +75,6 @@ export default class PicturesController {
       const picture = await Picture.query().where("product_id", params.id)
 
       if(picture.length != 0) {
-        console.log(picture)
         return response.status(200).json({
           code: 200,
           status: "success",
