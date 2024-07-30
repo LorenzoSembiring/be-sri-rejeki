@@ -78,6 +78,8 @@ export default class OrdersController {
         })
       }
 
+      await Database.from('carts').whereIn('id', ids).andWhere('user_id', user.id).update('status', 'checked_out')
+
       const order = await Order.create({
         user_id: user.id,
         kurir: kurir,
@@ -103,19 +105,34 @@ export default class OrdersController {
             quantity: cart[0][0].quantity,
           })
         })
-        const midtrans = await this.midtransPay(totalCost, UUID)
-        return response.status(200).json({
-          code: 200,
-          status: 'success',
-          message: 'Order palced',
-          data: midtrans,
-        })
+        try {
+          const midtrans = await this.midtransPay(totalCost, UUID);
+
+          console.log('Midtrans response:', midtrans);
+
+          const createdOrder = await Order.findOrFail(order.id);
+          createdOrder.midtrans_token = midtrans.token;
+
+          await createdOrder.save();
+          console.log('Order updated with midtrans token:', createdOrder.midtrans_token);
+          return response.status(200).json({
+            code: 200,
+            status: 'success',
+            message: 'Order palced',
+            data: {
+              midtrans,
+              createdOrder
+            }
+          })
+        } catch (error) {
+          console.error('Error updating order with midtrans token:', error);
+        }
       }
     } catch (error) {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: 'An error occurred while processing the order',
+        message: error.message
       })
     }
   }
