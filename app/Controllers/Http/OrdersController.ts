@@ -249,7 +249,7 @@ export default class OrdersController {
     try {
       const reqQuery = request.qs()
       const data = await Database.rawQuery(
-        "SELECT o.id, u.username, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total' FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN users u ON o.user_id = u.id WHERE 1=1 AND (:month IS NULL OR MONTH(o.created_at) = :month) AND (:year IS NULL OR YEAR(o.created_at) = :year) GROUP BY o.id, p.name, o.ongkir;",
+        "SELECT o.id, u.username, o.status, o.type_kurir, o.kurir, o.ongkir, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total' FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN users u ON o.user_id = u.id WHERE 1=1 AND (:month IS NULL OR MONTH(o.created_at) = :month) AND (:year IS NULL OR YEAR(o.created_at) = :year) GROUP BY o.id, p.name, o.ongkir;",
         {
           month: reqQuery.month,
           year: reqQuery.year,
