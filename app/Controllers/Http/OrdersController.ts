@@ -284,7 +284,9 @@ export default class OrdersController {
     try {
       const order = await Order.find(order_id)
       order!.resi = resi
+      order!.status = 'shipped'
       await order?.save()
+
 
       return response.status(200).json({
         code: 200,
