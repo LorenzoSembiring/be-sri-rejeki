@@ -108,13 +108,11 @@ export default class OrdersController {
         try {
           const midtrans = await this.midtransPay(totalCost, UUID);
 
-          console.log('Midtrans response:', midtrans);
 
           const createdOrder = await Order.findOrFail(order.id);
           createdOrder.midtrans_token = midtrans.token;
 
           await createdOrder.save();
-          console.log('Order updated with midtrans token:', createdOrder.midtrans_token);
           return response.status(200).json({
             code: 200,
             status: 'success',
@@ -153,7 +151,6 @@ export default class OrdersController {
 
     try {
       const response = await axios.post(url, data, config)
-      console.log(response.data)
       return response.data
     } catch (error) {
       console.error('Error:', error.response ? error.response.data : error.message)
