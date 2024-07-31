@@ -145,4 +145,34 @@ export default class StatisticsController {
       })
     }
   }
+  public async getDailyOrderOnWeek({ auth, response }: HttpContextContract) {
+    const usersController = new UsersController()
+    try {
+      const user = await auth.authenticate()
+      const role = await usersController.getRole(user)
+
+      if (role == 'admin') {
+        var data = await Database.rawQuery(
+          'WITH RECURSIVE DateRange AS ( SELECT CURDATE() - INTERVAL 6 DAY AS `date` UNION ALL SELECT `date` + INTERVAL 1 DAY FROM DateRange WHERE `date` + INTERVAL 1 DAY <= CURDATE() ) SELECT COUNT(o.id) AS `total`, d.`date`, DAYNAME(d.`date`) AS `day` FROM DateRange d LEFT JOIN `orders` o ON DATE(o.created_at) = d.`date` GROUP BY d.`date` ORDER BY d.`date` DESC LIMIT 7;'
+        )
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          data: data[0]
+        })
+      } else {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+          message: 'Your role access is not sufficient for this action',
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        message: 'fail',
+        error: error,
+      })
+    }
+  }
 }

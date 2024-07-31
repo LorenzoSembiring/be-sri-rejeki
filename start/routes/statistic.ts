@@ -6,4 +6,5 @@ Route.group(() => {
   Route.get('order-count', 'StatisticsController.getOrderCount')
   Route.get('sales-sum', 'StatisticsController.getSalesSum')
   Route.get('best-seller', 'StatisticsController.getBestSeller')
+  Route.get('graph-daily', 'StatisticsController.getDailyOrderOnWeek')
 }).prefix('/api/statistic')
