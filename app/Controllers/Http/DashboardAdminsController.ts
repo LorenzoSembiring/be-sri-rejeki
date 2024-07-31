@@ -16,7 +16,7 @@ export default class DashboardAdminsController {
       })
     }
     try {
-      const data = await Database.rawQuery("SELECT o.id, u.username, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total' FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN users u on o.user_id = u.id WHERE o.status = 'waiting for payment' OR o.status = 'pending' GROUP BY o.id, p.name, o.ongkir;")
+      const data = await Database.rawQuery("SELECT o.id, u.username, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total' FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN users u on o.user_id = u.id WHERE o.status = 'waiting for payment' OR o.status = 'processed' GROUP BY o.id, p.name, o.ongkir;")
       return response.status(200).json({
         code: 200,
         status: 'success',
