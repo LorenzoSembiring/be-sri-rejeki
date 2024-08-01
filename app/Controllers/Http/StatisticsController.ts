@@ -153,7 +153,7 @@ export default class StatisticsController {
 
       if (role == 'admin') {
         var data = await Database.rawQuery(
-          'WITH RECURSIVE DateRange AS ( SELECT CURDATE() - INTERVAL 6 DAY AS `date` UNION ALL SELECT `date` + INTERVAL 1 DAY FROM DateRange WHERE `date` + INTERVAL 1 DAY <= CURDATE() ) SELECT COUNT(o.id) AS `total`, d.`date`, DAYNAME(d.`date`) AS `day` FROM DateRange d LEFT JOIN `orders` o ON DATE(o.created_at) = d.`date` GROUP BY d.`date` ORDER BY d.`date` DESC LIMIT 7;'
+          'WITH RECURSIVE DateRange AS ( SELECT CURDATE() - INTERVAL 6 DAY AS `date` UNION ALL SELECT `date` + INTERVAL 1 DAY FROM DateRange WHERE `date` + INTERVAL 1 DAY <= CURDATE() ) SELECT COUNT(o.id) AS `total`, d.`date`, DAYNAME(d.`date`) AS `day` FROM DateRange d LEFT JOIN `orders` o ON DATE(o.created_at) = d.`date` GROUP BY d.`date` ORDER BY d.`date` ASC LIMIT 7;'
         )
         return response.status(200).json({
           code: 200,
