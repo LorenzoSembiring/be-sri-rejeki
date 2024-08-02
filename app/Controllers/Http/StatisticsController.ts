@@ -123,7 +123,7 @@ export default class StatisticsController {
 
       if (role == 'admin') {
         var data = await Database.rawQuery(
-          'SELECT p.name, p.price, pc.path AS picture, SUM(od.quantity) AS sales FROM order_details od JOIN products p ON od.product_id = p.id LEFT JOIN pictures pc ON pc.product_id = p.id AND pc.index = 1 GROUP BY p.name, p.price, pc.path ORDER BY sales DESC LIMIT 3;'
+          'SELECT p.id, p.name, p.price, pc.path AS picture, SUM(od.quantity) AS sales FROM order_details od JOIN products p ON od.product_id = p.id LEFT JOIN pictures pc ON pc.product_id = p.id AND pc.index = 1 GROUP BY p.name, p.price, pc.path ORDER BY sales DESC LIMIT 3;'
         )
         return response.status(200).json({
           code: 200,
