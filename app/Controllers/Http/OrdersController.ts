@@ -265,6 +265,37 @@ export default class OrdersController {
       })
     }
   }
+  public async checkResi({ request, response }: HttpContextContract) {
+    try {
+      var { courier, awb } = request.body();
+
+      const data = await axios.get(`https://api.binderbyte.com/v1/track?api_key=${process.env.BINDERBYTE_KEY}&courier=${courier}&awb=${awb}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      return response.status(200).json({
+        code: 200,
+        status: 'success',
+        data: data.data.data
+      });
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        return response.status(401).json({
+          code: 401,
+          status: 'unauthorized',
+        });
+      }
+      return response.status(500).json({
+        code: 500,
+        status: 'failed',
+        error: error.message,
+      });
+    }
+  }
+
   public async addResi({ request, response, auth }: HttpContextContract) {
     const user = await auth.authenticate();
     const usersController = new UsersController()
