@@ -136,13 +136,23 @@ export default class UsersController {
         message: 'Error',
       })
     }
+  }
+
+  public async getPicture({ auth, response }: HttpContextContract) {
+    const logedUser = await auth.authenticate()
 
     try {
-      const user = await User.findBy('id', authenticatedUser.id)
+      const user = await User.find(logedUser.id)
+      return response.status(200).json({
+        code: 200,
+        status: 'success',
+        data: process.env.server! + '/picture/' + user?.picture
+      })
     } catch (error) {
       return response.status(500).json({
         code: 500,
-        message: 'Error',
+        status: 'fail',
+        message: error.message,
       })
     }
   }
