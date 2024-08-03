@@ -100,17 +100,40 @@ export default class UsersController {
       })
     }
   }
-  
+
   public async updatePicture({ request, response, auth }: HttpContextContract) {
     const authenticatedUser = await auth.authenticate()
-    const uploadedFile = request.file('picture')
+    const userID = authenticatedUser.id
+    const user = await User.find(userID)
+    try {
+      const file = request.file('file', {
+        size: '2mb',
+        extnames: ['jpg', 'jpeg', 'png']
+      })
 
-    if (uploadedFile) {
-      await uploadedFile.moveToDisk('./')
-    } else {
-      return response.status(400).json({
-        code: 400,
-        message: "File not provided!"
+      if (file) {
+        await file?.moveToDisk('./picture',{
+          overwrite: true
+        })
+        user!.picture = file.fileName!
+        await user?.save()
+
+        return response.status(200).json({
+          code: 200,
+          status: 'success',
+          message: 'picture updated',
+          path: file.fileName
+        })
+      } else {
+        return response.status(400).json({
+          code: 400,
+          message: "File not provided!"
+        })
+      }
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        message: 'Error',
       })
     }
 
