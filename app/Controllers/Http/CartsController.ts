@@ -13,6 +13,7 @@ export default class CartsController {
       const cart = await Cart.query()
       .where("user_id", user.id)
       .where("size_id", size_id)
+      .where("status", "active")
       .first()
       // inputed quantity
       const intQuantity = parseInt(quantity)
@@ -39,7 +40,7 @@ export default class CartsController {
           message: 'Stock unavailable'
         })
       }
-      else if(user && cart && isStockAvailable) {
+      else if(user && cart && isStockAvailable ) {
         //handling when the cart for correspond product and user is exist, it will change the existing cart quantity
         cart.quantity = cartQuantity + intQuantity
         await cart.save()
