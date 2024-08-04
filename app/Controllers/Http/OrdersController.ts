@@ -215,7 +215,7 @@ export default class OrdersController {
     const user = await auth.authenticate()
     try {
       const data = await Database.rawQuery(
-        "SELECT o.id, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total', pic.path FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.user_id = ? GROUP BY o.id, p.name, o.ongkir, pic.path;",
+        "SELECT o.id, o.status, o.resi, o.kurir, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, o.midtrans_token, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total', pic.path FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.user_id = ? GROUP BY o.id, p.name, o.ongkir, pic.path;",
         [user.id]
       )
       return response.status(200).json({
