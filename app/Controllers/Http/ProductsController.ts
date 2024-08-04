@@ -261,38 +261,103 @@ export default class ProductsController {
     }
   }
   public async update({ params, request, response, auth }: HttpContextContract) {
-    const usersController = new UsersController()
+    const usersController = new UsersController();
 
     try {
-      const user = await auth.authenticate()
-      var role = await usersController.getRole(user)
-      if (role === 'admin') {
-        const input = request.only(['name', 'description', 'price', 'category_id'])
+      const user = await auth.authenticate();
+      const role = await usersController.getRole(user);
 
-        const product = await Product.findBy('id', params.id)
-        product?.merge(input)
-        await product?.save()
+      if (role === 'admin') {
+        const input = request.only(['name', 'description', 'price', 'category_id', 'weight', 'status', 'mesh_id']);
+        const product = await Product.findBy('id', params.id);
+
+        if (!product) {
+          return response.status(404).json({
+            code: 404,
+            status: 'fail',
+            message: 'Product not found',
+          });
+        }
+
+        // Update product details
+        const file = request.file('file', {
+          size: '2mb',
+          extnames: ['jpg', 'png', 'jpeg'],
+        });
+
+        if (file) {
+          await file.moveToDisk('./texture');
+          const fileName = file.fileName;
+          product.texture = "/uploads/texture/" + fileName;
+        }
+
+        product.merge(input);
+        await product.save();
+
+        // Process size updates
+        const sizesPayload = request.input('sizes'); // Assuming the payload is sent with key 'sizes'
+        const sizes = JSON.parse(sizesPayload);
+
+        // Get existing sizes
+        const existingSizes = await Size.query()
+          .where('product_id', product.id)
+        const existingSizesMap = new Map(existingSizes.map(size => [size.size, size.id]));
+
+        // Update or create sizes from payload
+        for (let item of sizes) {
+          if (existingSizesMap.has(item.size)) {
+            // Update existing size stock
+            const sizeId = existingSizesMap.get(item.size);
+            const existingSize = await Size.find(sizeId);
+            if (existingSize) {
+              existingSize.stock = item.stock;
+              await existingSize.save();
+            }
+          } else {
+            // Create new size entry
+            await Size.create({
+              product_id: product.id,
+              size: item.size,
+              stock: item.stock,
+            });
+          }
+        }
+
+        // Delete sizes that are missing from the payload
+        const sizesFromPayload = new Set(sizes.map(item => item.size));
+        for (let [size, sizeId] of existingSizesMap.entries()) {
+          if (!sizesFromPayload.has(size)) {
+            // Delete size if it is not in the payload
+            const sizeToDelete = await Size.find(sizeId);
+            if (sizeToDelete) {
+              await sizeToDelete.delete();
+            }
+          }
+        }
 
         return response.status(200).json({
           code: 200,
           status: 'success',
-          message: 'update success',
-        })
+          message: 'Update success',
+          data: product,
+        });
       } else {
         return response.status(401).json({
           code: 401,
           status: 'unauthorized',
           message: 'Your role access is not sufficient for this action',
-        })
+        });
       }
     } catch (error) {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error,
-      })
+        message: error.message,
+      });
     }
   }
+
+
   public async updatePrice({ params, request, response, auth }: HttpContextContract) {
     const usersController = new UsersController()
 
