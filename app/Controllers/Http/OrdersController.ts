@@ -265,6 +265,39 @@ export default class OrdersController {
       })
     }
   }
+  public async adminDetail({ params, response, auth }: HttpContextContract) {
+    const usersController = new UsersController()
+    const user = await auth.authenticate()
+    var role = await usersController.getRole(user)
+    const id = parseInt(params.id)
+
+    if (role !== 'admin') {
+      return response.status(401).json({
+        code: 401,
+        status: 'Unauthorized',
+        message: 'Your role access is not sufficient for this action',
+      })
+    }
+    try {
+      const data = await Database.rawQuery(
+        "SELECT o.id, o.kurir, o.ongkir, o.resi, o.midtrans_id, o.status, p.name, pic.path FROM `orders` o LEFT JOIN `order_details` od on od.order_id = o.id LEFT JOIN `products` p ON od.product_id = p.id LEFT JOIN `pictures` pic on pic.product_id = p.id WHERE pic.index = 1 AND o.id = :id;",
+        {
+          id: id
+        }
+      )
+      return response.status(200).json({
+        code: 200,
+        status: 'success',
+        data: data[0],
+      })
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        message: error.message,
+      })
+    }
+  }
   public async checkResi({ request, response }: HttpContextContract) {
     try {
       var { courier, awb } = request.body()
