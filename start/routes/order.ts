@@ -9,10 +9,13 @@ Route.group(() => {
     Route.post('cek-resi', 'OrdersController.checkResi')
     Route.get('get/:id', 'OrdersController.get')
     Route.get('admin-index', 'OrdersController.adminIndex')
+    Route.get('admin-detail/:id', 'OrdersController.adminDetail')
     Route.get('waiting-payment', 'OrdersController.getWaitingPayment')
     Route.get('transaction-history', 'OrdersController.getTransactionHistory')
     Route.get('midtrans-status/:id', 'OrdersController.midtransStatus')
     Route.get('get-province', 'OrdersController.getProvince')
+    Route.get('cancel/:id', 'OrdersController.cancelOrder')
+    Route.get('delivered/:id', 'OrdersController.deliveredOrder')
     Route.put('update/:id', 'OrdersController.update')
     Route.delete('delete/:id', 'OrdersController.destroy')
 
