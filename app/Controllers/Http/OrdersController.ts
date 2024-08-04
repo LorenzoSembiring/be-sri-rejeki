@@ -331,24 +331,46 @@ export default class OrdersController {
       })
     }
   }
+  public async deliveredOrder({ auth, params, response }: HttpContextContract) {
+    const user = await auth.authenticate()
+    const orderID = params.id
+    if (!user) {
+      return response.status(401).json({
+        code: 401,
+        status: 'Unauthorized',
+        message: 'You should login first',
+      })
+    }
+    try {
+      const order = await Order.find(orderID)
+      const orderUser = order?.user_id
+      if (orderUser != user.id) {
+        return response.status(400).json({
+          code: 400,
+          status: 'bad request',
+          message: "you can't perform this action",
+        })
+      }
+      order!.status = 'delivered'
+      await order?.save()
 
       return response.status(200).json({
         code: 200,
         status: 'success',
-        data: data.data.data
-      });
+        message: 'delivered order success'
+      })
     } catch (error) {
       if (error.response && error.response.status === 401) {
         return response.status(401).json({
           code: 401,
           status: 'unauthorized',
-        });
+        })
       }
       return response.status(500).json({
         code: 500,
         status: 'failed',
         error: error.message,
-      });
+      })
     }
   }
 
