@@ -406,18 +406,41 @@ export default class OrdersController {
       })
     }
   }
+  public async cancelOrder({ auth, params, response }: HttpContextContract) {
+    const user = await auth.authenticate()
+    const orderID = params.id
+    if (!user) {
+      return response.status(401).json({
+        code: 401,
+        status: 'Unauthorized',
+        message: 'You should login first',
+      })
+    }
+
+    try {
+      const order = await Order.find(orderID)
+      const orderUser = order?.user_id
+      if (orderUser != user.id) {
+        return response.status(400).json({
+          code: 400,
+          status: 'bad request',
+          message: "you can't perform this action",
+        })
+      }
+      order!.status = 'canceled'
+      await order?.save()
 
       return response.status(200).json({
         code: 200,
         status: 'success',
-        message: 'update success'
+        message: 'update success',
       })
     } catch (error) {
       return response.status(500).json({
         code: 500,
         status: 'fail',
         error: error.message,
-      });
+      })
     }
   }
 }
