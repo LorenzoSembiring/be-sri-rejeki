@@ -78,7 +78,10 @@ export default class OrdersController {
         })
       }
 
-      await Database.from('carts').whereIn('id', ids).andWhere('user_id', user.id).update('status', 'checked_out')
+      await Database.from('carts')
+        .whereIn('id', ids)
+        .andWhere('user_id', user.id)
+        .update('status', 'checked_out')
 
       const order = await Order.create({
         user_id: user.id,
@@ -106,31 +109,30 @@ export default class OrdersController {
           })
         })
         try {
-          const midtrans = await this.midtransPay(totalCost, UUID);
+          const midtrans = await this.midtransPay(totalCost, UUID)
 
+          const createdOrder = await Order.findOrFail(order.id)
+          createdOrder.midtrans_token = midtrans.token
 
-          const createdOrder = await Order.findOrFail(order.id);
-          createdOrder.midtrans_token = midtrans.token;
-
-          await createdOrder.save();
+          await createdOrder.save()
           return response.status(200).json({
             code: 200,
             status: 'success',
             message: 'Order palced',
             data: {
               midtrans,
-              createdOrder
-            }
+              createdOrder,
+            },
           })
         } catch (error) {
-          console.error('Error updating order with midtrans token:', error);
+          console.error('Error updating order with midtrans token:', error)
         }
       }
     } catch (error) {
       return response.status(500).json({
         code: 500,
         status: 'fail',
-        message: error.message
+        message: error.message,
       })
     }
   }
@@ -168,7 +170,10 @@ export default class OrdersController {
           'Authorization': process.env.MIDTRANS_KEY,
         },
       })
-      if ((await data).data.status_code == 200 && (await data).data.transaction_status == 'settlement') {
+      if (
+        (await data).data.status_code == 200 &&
+        (await data).data.transaction_status == 'settlement'
+      ) {
         await Database.from('orders').where('midtrans_id', ORDER_ID).update('status', 'processed')
       }
       return (await data).data
