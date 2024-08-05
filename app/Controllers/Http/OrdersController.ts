@@ -200,7 +200,7 @@ export default class OrdersController {
     const user = await auth.authenticate()
     try {
       const data = await Database.rawQuery(
-        "SELECT o.id, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, o.midtrans_token, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total', pic.path FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.user_id = ? AND o.status = 'waiting for payment' GROUP BY o.id, p.name, o.ongkir, pic.path;",
+        `SELECT o.id, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, o.midtrans_token, (SELECT p.name FROM order_details od2 JOIN products p ON p.id = od2.product_id WHERE od2.order_id = o.id LIMIT 1) AS name, (SELECT pic.path FROM order_details od3 JOIN products p ON p.id = od3.product_id JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE od3.order_id = o.id LIMIT 1) AS path, GROUP_CONCAT(CONCAT('{"product_id":', p.id, ',"product_name":"', p.name, '","quantity":', od.quantity, ',"price":', p.price, ',"subtotal":', p.price * od.quantity, ',"picture_path":"', IFNULL(pic.path, ''), '"}') SEPARATOR ',') AS order_details, SUM(p.price * od.quantity) + o.ongkir AS total FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.user_id = ? AND o.status = 'waiting for payment' GROUP BY o.id, o.status, o.created_at, o.midtrans_id, o.midtrans_token, o.ongkir;`,
         [user.id]
       )
       return response.status(200).json({
@@ -220,8 +220,27 @@ export default class OrdersController {
     const user = await auth.authenticate()
     try {
       const data = await Database.rawQuery(
-        "SELECT o.id, o.status, o.resi, o.kurir, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, o.midtrans_token, p.name, SUM(p.price * od.quantity) + o.ongkir AS 'total', pic.path FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.user_id = ? GROUP BY o.id, p.name, o.ongkir, pic.path;",
+        `SELECT o.id, o.status, o.resi, o.kurir, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, o.midtrans_token, (SELECT p.name FROM order_details od2 JOIN products p ON p.id = od2.product_id WHERE od2.order_id = o.id LIMIT 1) AS name, (SELECT pic.path FROM order_details od3 JOIN products p ON p.id = od3.product_id JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE od3.order_id = o.id LIMIT 1) AS path, GROUP_CONCAT(CONCAT('{"product_id":', p.id, ',"product_name":"', p.name, '","quantity":', od.quantity, ',"price":', p.price, ',"subtotal":', p.price * od.quantity, ',"picture_path":"', IFNULL(pic.path, ''), '"}') SEPARATOR ',') AS order_details, SUM(p.price * od.quantity) + o.ongkir AS total FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.user_id = ? GROUP BY o.id, o.status, o.created_at, o.midtrans_id, o.midtrans_token, o.ongkir;`,
         [user.id]
+      )
+      return response.status(200).json({
+        code: 200,
+        status: 'success',
+        data: data[0],
+      })
+    } catch (error) {
+      return response.status(500).json({
+        code: 500,
+        status: 'fail',
+        error: error.message,
+      })
+    }
+  }
+  public async getOrderDetail({ params, response }: HttpContextContract) {
+    try {
+      const data = await Database.rawQuery(
+        `SELECT o.id, o.status, DATE_FORMAT(o.created_at, '%d %M %Y') AS formatted_date, o.midtrans_id, o.midtrans_token, (SELECT p.name FROM order_details od2 JOIN products p ON p.id = od2.product_id WHERE od2.order_id = o.id LIMIT 1) AS name, (SELECT pic.path FROM order_details od3 JOIN products p ON p.id = od3.product_id JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE od3.order_id = o.id LIMIT 1) AS path, GROUP_CONCAT(CONCAT('{"product_id":', p.id, ',"product_name":"', p.name, '","quantity":', od.quantity, ',"price":', p.price, ',"subtotal":', p.price * od.quantity, ',"picture_path":"', IFNULL(pic.path, ''), '"}') SEPARATOR ',') AS order_details, SUM(p.price * od.quantity) + o.ongkir AS total FROM orders o LEFT JOIN order_details od ON od.order_id = o.id LEFT JOIN products p ON p.id = od.product_id LEFT JOIN pictures pic ON pic.product_id = p.id AND pic.index = 1 WHERE o.id = ? GROUP BY o.id, o.status, o.created_at, o.midtrans_id, o.midtrans_token, o.ongkir;`,
+        [params.id]
       )
       return response.status(200).json({
         code: 200,
