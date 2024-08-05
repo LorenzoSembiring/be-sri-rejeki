@@ -12,6 +12,7 @@ Route.group(() => {
     Route.get('admin-detail/:id', 'OrdersController.adminDetail')
     Route.get('waiting-payment', 'OrdersController.getWaitingPayment')
     Route.get('transaction-history', 'OrdersController.getTransactionHistory')
+    Route.get('detail/:id', 'OrdersController.getOrderDetail')
     Route.get('midtrans-status/:id', 'OrdersController.midtransStatus')
     Route.get('get-province', 'OrdersController.getProvince')
     Route.get('cancel/:id', 'OrdersController.cancelOrder')
